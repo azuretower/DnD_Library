@@ -62,8 +62,8 @@ class Dndeck:
         menu = prompt.Menu()
         for num, x in enumerate(self._results):
             menu.add(str(num + 1), x[0])
-        choice = menu.show()
-        print(choice)
+        menu.add('s', 'Return to search bar')
+        choice = menu.show(header='==Results==')
         return choice
 
     @property

@@ -34,20 +34,13 @@ try:
         if deck.state == 0:
             hrule(width=term_width, char="~")
             response = cinput("What keyword are you looking for? ", colors.TEST)
-            # response = input(colors.TEST + "What keyword are you looking for? " + colors.ENDC + colors.UNDERLINE)
-            # print(colors.ENDC)
             if response == "quit":
                 run = False
                 continue
-            elif response == "reload":
-                # global deck
-                deck = setup()
             deck.search(response)
-            # deck.show_results
         elif deck.state == 1:
             hrule(width=term_width, char="~")
             response = deck.show_menu()
-            # response = cinput('Enter number of item or enter 0 to search again or X to see results again: ', colors.TEST)
             if response == 'X' or response == 'x':
                 deck.search(old_response)
             elif response == '' or response in string.ascii_letters:
