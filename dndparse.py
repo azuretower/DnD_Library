@@ -12,7 +12,6 @@ from prompt import *
 
 size = get_terminal_size()
 term_width = size.columns
-print(size.columns)
 
 rows, columns = os.popen('stty size', 'r').read().split()
 
@@ -34,8 +33,9 @@ try:
     while run:
         if deck.state == 0:
             hrule(width=term_width, char="~")
-            response = input(colors.TEST + "What keyword are you looking for? " + colors.ENDC + colors.UNDERLINE)
-            print(colors.ENDC)
+            response = cinput("What keyword are you looking for? ", colors.TEST)
+            # response = input(colors.TEST + "What keyword are you looking for? " + colors.ENDC + colors.UNDERLINE)
+            # print(colors.ENDC)
             if response == "quit":
                 run = False
                 continue
@@ -43,9 +43,11 @@ try:
                 # global deck
                 deck = setup()
             deck.search(response)
-            deck.show_results
+            # deck.show_results
         elif deck.state == 1:
-            hrule(width=term_width, char="~")            response = input('Enter number of item or enter 0 to search again or X to see results again: ')
+            hrule(width=term_width, char="~")
+            response = deck.show_menu()
+            # response = cinput('Enter number of item or enter 0 to search again or X to see results again: ', colors.TEST)
             if response == 'X' or response == 'x':
                 deck.search(old_response)
             elif response == '' or response in string.ascii_letters:

@@ -1,7 +1,12 @@
 import sys
 from utils import clear
 from utils import colors as c
+from prompt import *
 from textwrap import TextWrapper
+from shutil import get_terminal_size
+
+size = get_terminal_size()
+term_width = size.columns
 #implement wrap in the future https://docs.python.org/2/library/textwrap.html
 
 

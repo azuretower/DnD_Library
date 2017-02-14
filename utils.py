@@ -36,8 +36,10 @@ size = get_terminal_size()
 wrapper = TextWrapper(width=size.columns)
 
 def cprint(text, color=colors.ENDC):
-
     print(wrapper.wrap(color + text + colors.ENDC))
+
+def cinput(text, color=colors.ENDC):
+    return input(color + text + colors.ENDC)
 
 # def setup(directories):
 

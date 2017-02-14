@@ -1,6 +1,7 @@
 import os
 import fnmatch
 import xml.etree.ElementTree as ET
+import prompt
 
 class Dndeck:
     def __init__(self, directories):
@@ -54,8 +55,16 @@ class Dndeck:
 
     @property
     def show_results(self):
-        for x in self._results:
-                print(x[0])
+        for num, x in enumerate(self._results):
+            print(x[0])
+
+    def show_menu(self):
+        menu = prompt.Menu()
+        for num, x in enumerate(self._results):
+            menu.add(str(num + 1), x[0])
+        choice = menu.show()
+        print(choice)
+        return choice
 
     @property
     def get_results(self):
