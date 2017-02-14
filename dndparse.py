@@ -13,8 +13,7 @@ from prompt import *
 size = get_terminal_size()
 term_width = size.columns
 
-rows, columns = os.popen('stty size', 'r').read().split()
-
+cprint('look at me', colors.WARNING)
 
 clear()
 
@@ -43,19 +42,13 @@ try:
             response = deck.show_menu()
             if response == 's':
                 deck.set_state(0)
-            # if response == 'X' or response == 'x':
-            #     deck.search(old_response)
-            # elif response == '' or response in string.ascii_letters:
-            #     deck.state = 0
-            # elif int(response) == 0:
-            #     deck.state = 0
             else:
                 display(int(response), deck.get_results)
                 deck.set_state(0)
         elif deck.get_state == 2:
             hrule(width=term_width, char="~")
             display(1, deck.get_results)
-            deck.state = 0
+            deck.set_state(0)
 
 except KeyboardInterrupt:
     clear()
