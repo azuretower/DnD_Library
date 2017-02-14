@@ -3,11 +3,15 @@
 import xml.etree.ElementTree as ET
 import sys, os, os.path
 import string
+from shutil import get_terminal_size
+
 from utils import *
 from classes import *
 from displays import *
-from shutil import get_terminal_size
+from prompt import *
+
 size = get_terminal_size()
+term_width = size.columns
 print(size.columns)
 
 rows, columns = os.popen('stty size', 'r').read().split()
@@ -29,7 +33,7 @@ try:
     run = True
     while run:
         if deck.state == 0:
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            hrule(width=term_width, char="~")
             response = input(colors.TEST + "What keyword are you looking for? " + colors.ENDC + colors.UNDERLINE)
             print(colors.ENDC)
             if response == "quit":
@@ -41,8 +45,7 @@ try:
             deck.search(response)
             deck.show_results
         elif deck.state == 1:
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            response = input('Enter number of item or enter 0 to search again or X to see results again: ')
+            hrule(width=term_width, char="~")            response = input('Enter number of item or enter 0 to search again or X to see results again: ')
             if response == 'X' or response == 'x':
                 deck.search(old_response)
             elif response == '' or response in string.ascii_letters:
@@ -53,7 +56,7 @@ try:
                 display(int(response), deck.get_results)
                 deck.state = 0
         elif deck.state == 2:
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            hrule(width=term_width, char="~")
             display(1, deck.get_results)
             deck.state = 0
 

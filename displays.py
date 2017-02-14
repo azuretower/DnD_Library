@@ -1,7 +1,7 @@
 import sys
 from utils import clear
 from utils import colors as c
-from textwrap import wrap
+from textwrap import TextWrapper
 #implement wrap in the future https://docs.python.org/2/library/textwrap.html
 
 
@@ -30,7 +30,7 @@ def uprint(*objects, sep=' ', end='\n', file=sys.stdout):
         print(*map(f, objects), sep=sep, end=end, file=file)
 
 def displayMonster(element):
-    print('######################################################')
+    hrule(width=term_width, char="#")
     element_list = []
     for el in element:
         element_list.append((el.tag,el))

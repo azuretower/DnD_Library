@@ -3,6 +3,8 @@
 import os
 import fnmatch
 import xml.etree.ElementTree as ET
+from shutil import get_terminal_size
+from textwrap import TextWrapper
 from classes import *
 
 def clear():
@@ -29,6 +31,13 @@ class colors:
     UNDERLINE = '\033[4m'
     TEST = '\x1b[0;30;47m'
     heading = '\x1b[0;37;40m'
+
+size = get_terminal_size()
+wrapper = TextWrapper(width=size.columns)
+
+def cprint(text, color=colors.ENDC):
+
+    print(wrapper.wrap(color + text + colors.ENDC))
 
 # def setup(directories):
 
