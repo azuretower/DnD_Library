@@ -110,5 +110,3 @@ def displayMonster(element):
                 for description in descriptions:
                     if description.text != None:
                         print('    {}{}\n'.format('',description.text))
-
-    print('######################################################')
