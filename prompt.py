@@ -365,11 +365,17 @@ def title(msg):
     if sys.platform.startswith("win"):
         ctypes.windll.kernel32.SetConsoleTitleA(msg)
 
-def hrule(width=None, char=None):
+def hrule(width=None, char=None, header=""):
     """Outputs or returns a horizontal line of the given character and width."""
     width = width or HRWIDTH
     char = char or HRCHAR
-    echo(getline(char, width))
+    line = getline(char, width)
+    if header:
+        line = stridxrep(line, 3, " ")
+        for i,c in enumerate(header):
+            line = stridxrep(line, i+4, header[i])
+        line = stridxrep(line, i+5, " ")
+    echo(line)
 
 def wrap(body, header="", width=None, tchar=TCHAR, bchar=BCHAR, char=""):
     """Wraps the given body content between horizontal lines."""
