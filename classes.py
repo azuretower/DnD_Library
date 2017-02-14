@@ -35,7 +35,7 @@ class Dndeck:
         self._list = objects
         self._old_term = ""
         self._results = []
-        self.state = 0
+        self._state = 0
 
     def search(self, keyword):
         found = []
@@ -47,11 +47,11 @@ class Dndeck:
 
         if len(self._results) is 0:
             print("No Results Found")
-            self.state = 0
+            self._state = 0
         elif len(self._results) is 1:
-            self.state = 2
+            self._state = 2
         else:
-            self.state = 1
+            self._state = 1
 
     @property
     def show_results(self):
@@ -69,6 +69,13 @@ class Dndeck:
     @property
     def get_results(self):
         return self._results
+
+    @property
+    def get_state(self):
+        return self._state
+
+    def set_state(self, state):
+        self._state = state
 
     def clear_results(self):
         self._results = []

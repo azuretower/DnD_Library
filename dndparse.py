@@ -31,26 +31,28 @@ deck = setup()
 try:
     run = True
     while run:
-        if deck.state == 0:
+        if deck.get_state == 0:
             hrule(width=term_width, char="~")
             response = cinput("What keyword are you looking for? ", colors.TEST)
             if response == "quit":
                 run = False
                 continue
             deck.search(response)
-        elif deck.state == 1:
+        elif deck.get_state == 1:
             hrule(width=term_width, char="~")
             response = deck.show_menu()
-            if response == 'X' or response == 'x':
-                deck.search(old_response)
-            elif response == '' or response in string.ascii_letters:
-                deck.state = 0
-            elif int(response) == 0:
-                deck.state = 0
+            if response == 's':
+                deck.set_state(0)
+            # if response == 'X' or response == 'x':
+            #     deck.search(old_response)
+            # elif response == '' or response in string.ascii_letters:
+            #     deck.state = 0
+            # elif int(response) == 0:
+            #     deck.state = 0
             else:
                 display(int(response), deck.get_results)
-                deck.state = 0
-        elif deck.state == 2:
+                deck.set_state(0)
+        elif deck.get_state == 2:
             hrule(width=term_width, char="~")
             display(1, deck.get_results)
             deck.state = 0
