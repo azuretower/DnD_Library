@@ -20,6 +20,8 @@ from getpass import getpass
 from collections import namedtuple
 from functools import partial
 
+from shutil import get_terminal_size
+
 ##==============================================================#
 ## SECTION: Global Definitions                                  #
 ##==============================================================#
@@ -367,7 +369,9 @@ def title(msg):
 
 def hrule(width=None, char=None, header=""):
     """Outputs or returns a horizontal line of the given character and width."""
-    width = width or HRWIDTH
+    columns = get_terminal_size().columns
+    # width = width or HRWIDTH
+    width = width or columns
     char = char or HRCHAR
     line = getline(char, width)
     if header:

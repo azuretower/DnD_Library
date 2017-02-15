@@ -13,7 +13,6 @@ from prompt import *
 size = get_terminal_size()
 term_width = size.columns
 
-cprint('look at me', colors.WARNING)
 
 clear()
 
@@ -31,14 +30,14 @@ try:
     run = True
     while run:
         if deck.get_state == 0:
-            hrule(width=term_width, char="~")
+            hrule(char="~")
             response = cinput("What keyword are you looking for? ", colors.TEST)
             if response == "quit":
                 run = False
                 continue
             deck.search(response)
         elif deck.get_state == 1:
-            hrule(width=term_width, char="~")
+            hrule(char="~")
             response = deck.show_menu()
             if response == 's':
                 deck.set_state(0)
@@ -46,7 +45,7 @@ try:
                 display(int(response), deck.get_results)
                 deck.set_state(0)
         elif deck.get_state == 2:
-            hrule(width=term_width, char="~")
+            hrule(char="~")
             display(1, deck.get_results)
             deck.set_state(0)
 

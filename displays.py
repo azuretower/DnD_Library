@@ -1,23 +1,20 @@
 import sys
-from utils import clear
+from utils import clear, cprint
 from utils import colors as c
 from prompt import *
 from textwrap import TextWrapper
-from shutil import get_terminal_size
 
-size = get_terminal_size()
-term_width = size.columns
 #implement wrap in the future https://docs.python.org/2/library/textwrap.html
 
 
 def display(num, results):
     clear()
-    for x in results:
-        if num == int(x[0].split()[0]):
-            if x[1].tag == 'monster':
-                displayMonster(x[1])
-            else:
-                displayNext(x[1])
+    result = results[num - 1][1]
+    if result.tag == 'monster':
+        displayMonster(result)
+        # results[num - 1][2].display()
+    else:
+        displayNext(result)
 
 def displayNext(element):
     for el in element:
@@ -35,7 +32,7 @@ def uprint(*objects, sep=' ', end='\n', file=sys.stdout):
         print(*map(f, objects), sep=sep, end=end, file=file)
 
 def displayMonster(element):
-    hrule(width=term_width, char="#")
+    hrule(char="#")
     element_list = []
     for el in element:
         element_list.append((el.tag,el))
