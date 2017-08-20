@@ -8,12 +8,20 @@ from textwrap import TextWrapper
 from classes import *
 
 def clear():
-    os.system('clear')
+    os_name = os.name
+    if os_name == "posix": # if OS is unix based this should work
+        os.system('clear')
+    elif os_name == "nt": # if OS is windows
+        os.system('cls')
+    else:
+        pass
+        
 
 def setup():
     fileLoc = []
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    fileLoc.append('/Users/Azure/Dropbox/D&D 5e/DnDAppFiles/Compendiums')
+    fileLoc.append('/Users/Azure/Dropbox/DnD 5e/DnDAppFiles/Compendiums')
+    fileLoc.append('/Users/Azure/Dropbox/DnD 5e/DnDAppFiles/Unearthed Arcana')
     fileLoc.append(dir_path + '/PersonalDnDAppFiles')
 
     # create a Dndeck object from the list of directories

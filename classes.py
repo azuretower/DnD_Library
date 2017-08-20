@@ -2,6 +2,9 @@ import os
 import fnmatch
 import xml.etree.ElementTree as ET
 import prompt
+from utils import *
+
+# cprint('look at me', colors.WARNING)
 
 class Dndeck:
     def __init__(self, directories):
@@ -27,10 +30,12 @@ class Dndeck:
         for root in roots:
             for x in root:
                 if x.tag.lower() == 'monster':
-                    temp = Monster(x)
+                    mon = Monster(x)
                     # print(temp.name + " " + temp.readable_size + " " + str(len(temp.traits)))
-                    monsters.append(Monster(x))
-                objects.append((x[0].text,x))
+                    monsters.append(mon)
+                    objects.append((x[0].text,x,mon))
+                else:
+                    objects.append((x[0].text,x))
 
         self._list = objects
         self._old_term = ""
@@ -42,7 +47,7 @@ class Dndeck:
         self._old_term = keyword
         for x in self._list:
             if keyword.lower() in x[0].lower():
-                found.append((str(len(found) + 1) + ' ' + x[0],x[1]))
+                found.append((x))
         self._results = found
 
         if len(self._results) is 0:
@@ -135,3 +140,24 @@ class Monster:
             return "Huge"
         elif self.size.lower() == 'g':
             return "Gargantuan"
+
+    @property
+    def stats(self):
+        stat_string = "Str: {} | Dex: {} | Con: {} | Int: {} | Wis: {} | Cha: {}".format(
+                      self.strength, self.dexterity, self.constitution,
+                      self.intelligence, self.wisdom, self.charisma)
+        return stat_string
+
+    def display(self):
+        cprint(self.name + " | " + self.readable_size + " " + self.type.split(',')[0] + " | " + self.alignment, colors.HEADER)
+        print(self.ac)
+        print(self.hp)
+        print(self.speed)
+        print(self.stats)
+        print(self.saves)
+        print(self.skills)
+        print(self.resistances)
+        print(self.passive_perception)
+        print(self.languages)
+        print(self.cr)
+        print(self.spells)
