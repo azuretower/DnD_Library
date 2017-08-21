@@ -1,7 +1,7 @@
 import os
 import fnmatch
 import xml.etree.ElementTree as ET
-import prompt
+import qprompt
 from utils import *
 
 # cprint('look at me', colors.WARNING)
@@ -64,7 +64,7 @@ class Dndeck:
             print(x[0])
 
     def show_menu(self):
-        menu = prompt.Menu()
+        menu = qprompt.Menu()
         for num, x in enumerate(self._results):
             menu.add(str(num + 1), x[0])
         menu.add('s', 'Return to search bar')

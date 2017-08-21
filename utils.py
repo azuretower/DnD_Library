@@ -47,8 +47,8 @@ def cprint(text, color=colors.ENDC):
     output = "\n".join(wrapper.wrap(color + text + colors.ENDC))
     print(output)
 
-def cinput(text, color=colors.ENDC):
-    return input(color + text + colors.ENDC)
+# def cinput(text, color=colors.ENDC):
+#     return input(color + text + colors.ENDC)
 
 # def setup(directories):
 

@@ -1,8 +1,9 @@
 import sys
 from utils import clear, cprint
 from utils import colors as c
-from prompt import *
+from qprompt import *
 from textwrap import TextWrapper
+from shutil import get_terminal_size as gts
 
 #implement wrap in the future https://docs.python.org/2/library/textwrap.html
 
@@ -32,7 +33,7 @@ def uprint(*objects, sep=' ', end='\n', file=sys.stdout):
         print(*map(f, objects), sep=sep, end=end, file=file)
 
 def displayMonster(element):
-    hrule(char="#")
+    hrule(width=gts().columns, char="#")
     element_list = []
     for el in element:
         element_list.append((el.tag,el))
