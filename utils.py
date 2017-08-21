@@ -22,7 +22,7 @@ def setup():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     fileLoc.append('/Users/Azure/Dropbox/DnD 5e/DnDAppFiles/Compendiums')
     fileLoc.append('/Users/Azure/Dropbox/DnD 5e/DnDAppFiles/Unearthed Arcana')
-    fileLoc.append(dir_path + '/PersonalDnDAppFiles')
+    fileLoc.append(dir_path + '/DnDAppFiles')
 
     # create a Dndeck object from the list of directories
     return Dndeck(fileLoc)
