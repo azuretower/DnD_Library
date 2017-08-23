@@ -22,7 +22,7 @@ try:
         if Library.get_state == 0:
             hrule(width=gts().columns, char="~")
             response = ask_str("What keyword are you looking for?")
-            if response == "quit":
+            if response == ":quit":
                 run = False
                 continue
             Library.search(response)
