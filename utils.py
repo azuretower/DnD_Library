@@ -24,8 +24,8 @@ def setup():
     fileLoc.append('/Users/Azure/Dropbox/DnD 5e/DnDAppFiles/Unearthed Arcana')
     fileLoc.append(dir_path + '/DnDAppFiles')
 
-    # create a Dndeck object from the list of directories
-    return Dndeck(fileLoc)
+    # create a DndLibrary object from the list of directories
+    return DndLibrary(fileLoc)
 
 
 class colors:
@@ -42,40 +42,3 @@ class colors:
 
 size = get_terminal_size()
 wrapper = TextWrapper(width=size.columns)
-
-def cprint(text, color=colors.ENDC):
-    output = "\n".join(wrapper.wrap(color + text + colors.ENDC))
-    print(output)
-
-# def cinput(text, color=colors.ENDC):
-#     return input(color + text + colors.ENDC)
-
-# def setup(directories):
-
-#     roots = []
-#     matches = []
-#     # find all the .xml files in the directories in fileLoc
-#     for loc in directories:
-#         for root, dirnames, filenames in os.walk(loc):
-#             for filename in fnmatch.filter(filenames, '*.xml'):
-#                 matches.append(os.path.join(root, filename))
-
-#     # open each file and parse the xml
-#     for x, file in enumerate(matches):
-#         if "Full Compendium" not in file:
-#             print(file)
-#             tree = ET.parse(file)
-#             root = tree.getroot()
-#             roots.append(root)
-
-
-#     monsters = []
-#     objects = []
-#     for root in roots:
-#         for x in root:
-#             if x.tag.lower() == 'monster':
-#                 temp = Monster(x)
-#                 # print(temp.name + " " + temp.readable_size + " " + str(len(temp.traits)))
-#                 monsters.append(Monster(x))
-#             objects.append((x[0].text,x))
-#     return objects

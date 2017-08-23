@@ -6,7 +6,7 @@ from utils import *
 
 # cprint('look at me', colors.WARNING)
 
-class Dndeck:
+class DndLibrary:
     def __init__(self, directories):
         roots = []
         matches = []
@@ -149,7 +149,7 @@ class Monster:
         return stat_string
 
     def display(self):
-        cprint(self.name + " | " + self.readable_size + " " + self.type.split(',')[0] + " | " + self.alignment, colors.HEADER)
+        print(self.name + " | " + self.readable_size + " " + self.type.split(',')[0] + " | " + self.alignment)
         print(self.ac)
         print(self.hp)
         print(self.speed)
