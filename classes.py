@@ -25,13 +25,14 @@ class DndLibrary:
                 roots.append(root)
 
 
+        # make each xml entry into an object
         monsters = []
         objects = []
         for root in roots:
             for x in root:
                 if x.tag.lower() == 'monster':
                     mon = Monster(x)
-                    # print(temp.name + " " + temp.readable_size + " " + str(len(temp.traits)))
+                    # print(mon.name + " " + mon.readable_size + " " + str(len(mon.traits)))
                     monsters.append(mon)
                     objects.append((x[0].text,x,mon))
                 else:
@@ -143,21 +144,53 @@ class Monster:
 
     @property
     def stats(self):
-        stat_string = "Str: {} | Dex: {} | Con: {} | Int: {} | Wis: {} | Cha: {}".format(
-                      self.strength, self.dexterity, self.constitution,
-                      self.intelligence, self.wisdom, self.charisma)
-        return stat_string
+        def find_mod(score):
+            modifier = int((int(score) - 10) / 2)
+            if modifier >= 0:
+                modifier_str = str(f"+{modifier}")
+            else:
+                modifier_str =  str(f"{modifier}")
+            return modifier_str
+
+        def spacing(mod_string):
+            spaces = ""
+            if len(mod_string) == 6:
+                spaces = " "
+            elif len(mod_string) == 7:
+                spaces = "  "
+            else:
+                spaces = "   "
+
+            return spaces
+
+        str_mod = "{} ({})".format(self.strength, find_mod(self.strength))
+        dex_mod = "{} ({})".format(self.dexterity, find_mod(self.dexterity))
+        con_mod = "{} ({})".format(self.constitution, find_mod(self.constitution))
+        int_mod = "{} ({})".format(self.intelligence, find_mod(self.intelligence))
+        wis_mod = "{} ({})".format(self.wisdom, find_mod(self.wisdom))
+        cha_mod = "{} ({})".format(self.charisma, find_mod(self.charisma))
+        stat_string = "|   STR {}|   DEX {}|   CON {}|   INT {}|   WIS {}|   CHA {}|\n".format(
+                      spacing(str_mod), spacing(dex_mod), spacing(con_mod), 
+                      spacing(int_mod), spacing(wis_mod), spacing(cha_mod))
+        stat_string2 = f"| {str_mod} | {dex_mod} | {con_mod} | {int_mod} | {wis_mod} | {cha_mod} |"
+
+        return stat_string + stat_string2
 
     def display(self):
-        print(self.name + " | " + self.readable_size + " " + self.type.split(',')[0] + " | " + self.alignment)
-        print(self.ac)
-        print(self.hp)
-        print(self.speed)
+        print(self.name)
+        print(self.readable_size + " " + self.type.split(',')[0] + " | " + self.alignment)
+        print(f"AC: {self.ac}")
+        print(f"HP: {self.hp}")
+        print(f"Speed: {self.speed}")
         print(self.stats)
-        print(self.saves)
-        print(self.skills)
-        print(self.resistances)
-        print(self.passive_perception)
+        if self.saves != 'none':
+            print(self.saves)
+        if self.skills != 'none':
+            print(self.skills)
+        if self.resistances != 'none':
+            print(self.resistances)
+        print(f"Passive Perception {self.passive_perception}")
         print(self.languages)
-        print(self.cr)
-        print(self.spells)
+        print(f"Challenge: {self.cr}")
+        if self.spells != 'none':
+            print(self.spells)

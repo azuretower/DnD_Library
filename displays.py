@@ -12,8 +12,8 @@ def display(num, results):
     clear()
     result = results[num - 1][1]
     if result.tag == 'monster':
-        displayMonster(result)
-        # results[num - 1][2].display()
+        # displayMonster(result)
+        results[num - 1][2].display()
     else:
         displayNext(result)
 
