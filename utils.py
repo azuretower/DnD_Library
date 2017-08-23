@@ -24,8 +24,8 @@ def setup():
     fileLoc.append('/Users/Azure/Dropbox/DnD 5e/DnDAppFiles/Unearthed Arcana')
     fileLoc.append(dir_path + '/DnDAppFiles')
 
-    # create a Dndeck object from the list of directories
-    return Dndeck(fileLoc)
+    # create a DndLibrary object from the list of directories
+    return DndLibrary(fileLoc)
 
 
 class colors:

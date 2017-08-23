@@ -6,7 +6,7 @@ from utils import *
 
 # cprint('look at me', colors.WARNING)
 
-class Dndeck:
+class DndLibrary:
     def __init__(self, directories):
         roots = []
         matches = []
