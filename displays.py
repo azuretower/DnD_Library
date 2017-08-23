@@ -1,5 +1,5 @@
 import sys
-from utils import clear, cprint
+from utils import clear
 from utils import colors as c
 from qprompt import *
 from textwrap import TextWrapper
@@ -42,15 +42,18 @@ def displayMonster(element):
     for el in element_list:
         if el[0] == 'size':
             if el[1].text.lower() == 's':
-                print('{}: {} |'.format(el[0].capitalize(),"Small"), end=' ')
+                print('{}'.format("Small"), end=' ')
             elif el[1].text.lower() == 'm':
-                print('{}: {} |'.format(el[0].capitalize(),"Medium"), end=' ')
+                print('{}'.format("Medium"), end=' ')
             elif el[1].text.lower() == 'l':
-                print('{}: {} |'.format(el[0].capitalize(),"Large"), end=' ')
+                print('{}'.format("Large"), end=' ')
             elif el[1].text.lower() == 'h':
-                print('{}: {} |'.format(el[0].capitalize(),"Huge"), end=' ')
+                print('{}'.format("Huge"), end=' ')
             elif el[1].text.lower() == 'g':
-                print('{}: {} |'.format(el[0].capitalize(),"Gargantuan"), end=' ')
+                print('{}'.format("Gargantuan"), end=' ')
+
+        elif el[0] == 'type':
+            print(el[1].text)
 
         elif el[0] in stat_list or el[0] == 'ac' or el[0] == 'hp':
             print('{}: {} |'.format(el[0].capitalize(),el[1].text), end=' ')
@@ -64,7 +67,7 @@ def displayMonster(element):
     # findall trait, action, lengedary and print them
     traits = element.findall('trait')
     if traits:
-        print(c.heading + "==========Traits==========" + c.ENDC)
+        print("==========Traits==========")
         for trait in traits:
             name = trait.find('name')
             descriptions = trait.findall('text')
