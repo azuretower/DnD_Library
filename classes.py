@@ -109,10 +109,10 @@ class Ability:
             name_line = self.name
         description_lines = ""
         for line in self.description:
-            description_lines += wrapper.fill(line)
+            description_lines += wrapper.fill(line) + "\n"
 
         print(f"- {name_line}")
-        print(description_lines + "\n")
+        print(description_lines)
 
 class Monster:
     def __init__(self, e):
@@ -150,6 +150,16 @@ class Monster:
         actions_list = e.findall('action')
         for action in actions_list:
             self.actions.append(Ability(action))
+
+        self.reactions = []
+        reactions_list = e.findall('reaction')
+        for reaction in reactions_list:
+            self.reactions.append(Ability(reaction))
+
+        self.legendary_actions = []
+        legendary_actions_list = e.findall('legendary')
+        for legendary_action in legendary_actions_list:
+            self.legendary_actions.append(Ability(legendary_action))
 
     @property
     def readable_size(self):
@@ -201,7 +211,6 @@ class Monster:
         return stat_string + stat_string2
 
     def display(self):
-        wrapper = TextWrapper(width=gts().columns - 2, initial_indent="    ", subsequent_indent="    ")
         print(self.name)
         print(self.readable_size + " " + self.type.split(',')[0] + " | " + self.alignment)
         print(f"AC: {self.ac}")
@@ -226,16 +235,30 @@ class Monster:
             print(f"Senses: passive Perception {self.passive_perception}")
         print(f"Languages: {self.languages}")
         print(f"Challenge: {self.cr}")
-        if self.spells != 'None':
-            print(self.spells)
 
         if len(self.traits) > 0:
-            print("==========Traits==========")
+            print("\n==========Traits==========")
             for trait in self.traits:
                 trait.display()
+
+            wrapper = TextWrapper(width=gts().columns - 2, initial_indent="    ", subsequent_indent="    ")
+            if self.spells != 'None':
+                wrapped_spells_list = wrapper.fill(self.spells)
+                print("- Spells List")
+                print(wrapped_spells_list + "\n")
 
         if len(self.actions) > 0:
             print("==========Actions==========")
             for action in self.actions:
                 action.display()
+
+        if len(self.reactions) > 0:
+            print("==========Reactions==========")
+            for reaction in self.reactions:
+                reaction.display()
+
+        if len(self.legendary_actions) > 0:
+            print("==========Legendary Actions==========")
+            for legendary_action in self.legendary_actions:
+                legendary_action.display()
             
