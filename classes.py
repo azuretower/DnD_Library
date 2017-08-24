@@ -4,8 +4,7 @@ import xml.etree.ElementTree as ET
 import qprompt
 from textwrap import TextWrapper
 from shutil import get_terminal_size as gts
-from utils import *
-
+from utils import colors
 
 
 class DndLibrary:

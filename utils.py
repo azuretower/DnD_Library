@@ -5,7 +5,6 @@ import fnmatch
 import xml.etree.ElementTree as ET
 from shutil import get_terminal_size
 from textwrap import TextWrapper
-from classes import *
 
 def clear():
     os_name = os.name
@@ -17,7 +16,7 @@ def clear():
         pass
         
 
-def setup():
+def get_files():
     fileLoc = []
     dir_path = os.path.dirname(os.path.realpath(__file__))
     fileLoc.append('/Users/Azure/Dropbox/DnD 5e/DnDAppFiles/Compendiums')
@@ -25,8 +24,8 @@ def setup():
     fileLoc.append(dir_path + '/DnDAppFiles')
 
     # create a DndLibrary object from the list of directories
-    return DndLibrary(fileLoc)
-
+    return fileLoc
+        
 
 class colors:
     HEADER = '\033[95m'
@@ -39,6 +38,3 @@ class colors:
     UNDERLINE = '\033[4m'
     TEST = '\x1b[0;30;47m'
     heading = '\x1b[0;37;40m'
-
-size = get_terminal_size()
-wrapper = TextWrapper(width=size.columns)

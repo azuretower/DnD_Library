@@ -6,9 +6,10 @@ import string
 from shutil import get_terminal_size as gts
 from colorama import init
 
-from utils import *
+from utils import clear, get_files
 from displays import *
 from qprompt import *
+from classes import DndLibrary
 
 # sets up color support for windows
 init()
@@ -16,7 +17,8 @@ init()
 clear()
 
 # create a DndLibrary object from the list of directories
-Library = setup()
+
+Library = DndLibrary(get_files())
            
 try:
     run = True
