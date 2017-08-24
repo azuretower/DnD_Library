@@ -2,9 +2,11 @@ import os
 import fnmatch
 import xml.etree.ElementTree as ET
 import qprompt
+from textwrap import TextWrapper
+from shutil import get_terminal_size as gts
 from utils import *
 
-# cprint('look at me', colors.WARNING)
+
 
 class DndLibrary:
     def __init__(self, directories):
@@ -91,13 +93,26 @@ class Ability:
     def __init__(self, e):
         self.type = e.tag
         self.name = e.find('name').text
-        self.attack = e.find('attack').text if e.find('attack') != None else "none"
-        self.description = ''
+        self.attack = e.find('attack').text if e.find('attack') != None else 'None'
+        self.description = []
         lines = e.findall('text')
         for line in lines:
             if line.text != None:
-                self.description += line.text + "\n"
+                self.description.append(line.text)
 
+    def display(self):
+        wrapper = TextWrapper(width=gts().columns - 2, initial_indent="    ", subsequent_indent="    ")
+        if self.attack != 'None':
+            attack_split = self.attack.split("|")
+            name_line = f"{self.name} - {attack_split[1].strip()} ({attack_split[2].strip()})"
+        else:
+            name_line = self.name
+        description_lines = ""
+        for line in self.description:
+            description_lines += wrapper.fill(line)
+
+        print(f"- {name_line}")
+        print(description_lines + "\n")
 
 class Monster:
     def __init__(self, e):
@@ -114,18 +129,27 @@ class Monster:
         self.intelligence = e.find('int').text
         self.wisdom = e.find('wis').text
         self.charisma = e.find('cha').text
-        self.saves = e.find('save').text if e.find('save') != None else 'none'
-        self.skills = e.find('skill').text if e.find('skill') != None else 'none'
-        self.resistances = e.find('resistance').text if e.find('resistance') != None else 'none'
-        self.passive_perception = e.find('passive').text if e.find('passive') != None else 'none'
-        self.languages = e.find('languages').text if e.find('languages') != None else 'none'
+        self.saves = e.find('save').text if e.find('save') != None and e.find('save').text != None else 'None'
+        self.skills = e.find('skill').text if e.find('skill') != None and e.find('skill').text != None else 'None'
+        self.resistances = e.find('resistance').text if e.find('resistance') != None and e.find('resistance').text != None else 'None'
+        self.vulnerilities = e.find('vulnerable').text if e.find('vulnerable') != None and e.find('vulnerable').text != None else 'None'
+        self.damage_immunities = e.find('immune').text if e.find('immune') != None and e.find('immune').text != None else 'None'
+        self.condition_immunites = e.find('conditionImmune').text if e.find('conditionImmune') != None and e.find('conditionImmune').text != None else 'None'
+        self.senses = e.find('senses').text if e.find('senses') != None and e.find('senses').text != None else 'None'
+        self.passive_perception = e.find('passive').text if e.find('passive') != None and e.find('passive').text != None else 'None'
+        self.languages = e.find('languages').text if e.find('languages') != None and e.find('languages').text != None else 'None'
         self.cr = e.find('cr').text
-        self.spells = e.find('spells').text if e.find('spells') != None else 'none'
+        self.spells = e.find('spells').text if e.find('spells') != None and e.find('spells').text != None else 'None'
 
         self.traits = []
         traits_list = e.findall('trait')
         for trait in traits_list:
             self.traits.append(Ability(trait))
+
+        self.actions = []
+        actions_list = e.findall('action')
+        for action in actions_list:
+            self.actions.append(Ability(action))
 
     @property
     def readable_size(self):
@@ -177,20 +201,41 @@ class Monster:
         return stat_string + stat_string2
 
     def display(self):
+        wrapper = TextWrapper(width=gts().columns - 2, initial_indent="    ", subsequent_indent="    ")
         print(self.name)
         print(self.readable_size + " " + self.type.split(',')[0] + " | " + self.alignment)
         print(f"AC: {self.ac}")
         print(f"HP: {self.hp}")
         print(f"Speed: {self.speed}")
         print(self.stats)
-        if self.saves != 'none':
-            print(self.saves)
-        if self.skills != 'none':
-            print(self.skills)
-        if self.resistances != 'none':
-            print(self.resistances)
-        print(f"Passive Perception {self.passive_perception}")
-        print(self.languages)
+        if self.saves != 'None':
+            print(f"Saving Throws: {self.saves}")
+        if self.skills != 'None':
+            print(f"Skills: {self.skills}")
+        if self.resistances != 'None':
+            print(f"Resistances: {self.resistances}")
+        if self.vulnerilities != 'None':
+            print(f"Vulnerilities: {self.vulnerilities}")
+        if self.damage_immunities != 'None':
+            print(f"Damage Immunites: {self.damage_immunities}")
+        if self.condition_immunites != 'None':
+            print(f"Condition Immunites: {self.condition_immunites}")
+        if self.senses != 'None':
+            print(f"Senses: {self.senses}, passive Perception {self.passive_perception}")
+        else:
+            print(f"Senses: passive Perception {self.passive_perception}")
+        print(f"Languages: {self.languages}")
         print(f"Challenge: {self.cr}")
-        if self.spells != 'none':
+        if self.spells != 'None':
             print(self.spells)
+
+        if len(self.traits) > 0:
+            print("==========Traits==========")
+            for trait in self.traits:
+                trait.display()
+
+        if len(self.actions) > 0:
+            print("==========Actions==========")
+            for action in self.actions:
+                action.display()
+            
