@@ -4,11 +4,14 @@ import xml.etree.ElementTree as ET
 import sys, os, os.path
 import string
 from shutil import get_terminal_size as gts
+from colorama import init
 
 from utils import *
 from displays import *
 from qprompt import *
 
+# sets up color support for windows
+init()
 
 clear()
 
