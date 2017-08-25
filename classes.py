@@ -393,18 +393,22 @@ class Spell:
                 print(f"{self.readable_level} {self.readable_school} (ritual)")
             else:
                 print(f"{self.readable_level} {self.readable_school}")
-
-        print(f"Casting Time: {self.casting_time}")
-        print(f"Range: {self.range}")
-        wrapper.width = gts().columns - 14
-        wrapper.subsequent_indent = '            '
-        wrapped_components = wrapper.fill(self.component_string)
-        print(f"Components: {wrapped_components}")
-        print(f"Duration: {self.duration_string}")
-        wrapper.width = gts().columns - 10
-        wrapper.subsequent_indent = '          '
-        wrapped_classes = wrapper.fill(self.classes_string)
-        print(f"Classes: {wrapped_classes}")
+        if self. casting_time != 'None':
+            print(f"Casting Time: {self.casting_time}")
+        if self.range != 'None':
+            print(f"Range: {self.range}")
+        if self.component_string != 'None':
+            wrapper.width = gts().columns - 14
+            wrapper.subsequent_indent = '            '
+            wrapped_components = wrapper.fill(self.component_string)
+            print(f"Components: {wrapped_components}")
+        if self.duration_string != 'None':
+            print(f"Duration: {self.duration_string}")
+        if self.classes_string != 'None':
+            wrapper.width = gts().columns - 10
+            wrapper.subsequent_indent = '          '
+            wrapped_classes = wrapper.fill(self.classes_string)
+            print(f"Classes: {wrapped_classes}")
         if self.rolls != []:
             joined_rolls = " | ".join(self.rolls)
             print(f"Rolls: {joined_rolls}")
@@ -417,5 +421,6 @@ class Spell:
             if i + 1 != len(self.description):
                 description_lines += '\n'
 
-        print(f"\n{description_lines}")
+        print('\n==========Description==========')
+        print(f"{description_lines}")
             
