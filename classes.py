@@ -4,7 +4,8 @@ import xml.etree.ElementTree as ET
 import qprompt
 from textwrap import TextWrapper
 from shutil import get_terminal_size as gts
-from utils import colors
+from utils import colors as c
+from utils import clear
 
 
 class DndLibrary:
@@ -24,7 +25,6 @@ class DndLibrary:
                 tree = ET.parse(file)
                 root = tree.getroot()
                 roots.append(root)
-
 
         # make each xml entry into an object
         monsters = []
@@ -65,10 +65,33 @@ class DndLibrary:
         for num, x in enumerate(self._results):
             print(x[0])
 
+    def _type_abbreviation(self, element):
+        element_type = element.tag.lower()
+        short_type = ""
+        if element_type == 'monster':
+            short_type = 'Mons'
+        elif element_type == 'item':
+            short_type = 'Item'
+        elif element_type == 'spell':
+            short_type = 'Spel'
+        elif element_type == 'class':
+            short_type = 'Clas'
+        elif element_type == 'race':
+            short_type = 'Race'
+        elif element_type == 'feat':
+            short_type = 'Feat'
+        elif element_type == 'background':
+            short_type = 'Back'
+        else:
+            short_type = element_type
+
+        return short_type
+
     def show_menu(self):
+        clear()
         menu = qprompt.Menu()
         for num, x in enumerate(self._results):
-            menu.add(str(num + 1), x[0])
+            menu.add(str(num + 1), f"{self._type_abbreviation(x[1])} - {x[0]}")
         menu.add('s', 'Return to search bar')
         choice = menu.show(header='==Results==')
         return choice
