@@ -4,10 +4,11 @@ import xml.etree.ElementTree as ET
 import qprompt
 from textwrap import TextWrapper
 from shutil import get_terminal_size as gts
-from utils import colors as c
-from utils import clear
+import re
+from utils import colors, clear, decorate_dice_rolls, decorate_higher_levels, decorate_skills
+from utils import print
 
-
+c = colors
 class DndLibrary:
     def __init__(self, directories):
         roots = []
@@ -417,7 +418,8 @@ class Spell:
         wrapper.subsequent_indent = '  '
         description_lines = ""
         for i, line in enumerate(self.description):
-            description_lines += wrapper.fill(line) + "\n"
+            wrapped_line = wrapper.fill(line) + "\n"
+            description_lines += wrapped_line
             if i + 1 != len(self.description):
                 description_lines += '\n'
 
