@@ -114,6 +114,26 @@ class Ability:
         print(f"- {name_line}")
         print(description_lines)
 
+class Item:
+    def __init__(self, e):
+        self.name = e.find('name').text
+        self.type = e.find('type').text
+        self.magic = e.find('magic').text
+        self.weight = e.find('weight').text
+        self.ac = e.find('ac').text
+        self.strength = e.find('strength').text
+        self.stealth = e.find('stealth').text
+        self.dmg1 = e.find('dmg1').text
+        self.dmg2 = e.find('dmg2').text
+        self.dmgType = e.find('dmgType').text
+        self.property = e.find('property').text
+        self.range = e.find('range').text
+        self.text = e.find('text').text
+        
+
+
+
+
 class Monster:
     def __init__(self, e):
         self.name = e.find('name').text
