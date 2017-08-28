@@ -46,3 +46,4 @@ try:
 except KeyboardInterrupt:
     clear()
     print('Bye Bye!')
+useless = False
