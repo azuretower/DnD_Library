@@ -4,10 +4,11 @@ import xml.etree.ElementTree as ET
 import qprompt
 from textwrap import TextWrapper
 from shutil import get_terminal_size as gts
-from utils import *
+import re
+from utils import colors, clear, decorate_dice_rolls, decorate_higher_levels, decorate_skills
+from utils import print
 
-
-
+c = colors
 class DndLibrary:
     def __init__(self, directories):
         roots = []
@@ -26,7 +27,6 @@ class DndLibrary:
                 root = tree.getroot()
                 roots.append(root)
 
-
         # make each xml entry into an object
         monsters = []
         objects = []
@@ -37,6 +37,9 @@ class DndLibrary:
                     # print(mon.name + " " + mon.readable_size + " " + str(len(mon.traits)))
                     monsters.append(mon)
                     objects.append((x[0].text,x,mon))
+                if x.tag.lower() == 'spell':
+                    spell = Spell(x)
+                    objects.append((x[0].text,x,spell))
                 else:
                     objects.append((x[0].text,x))
 
@@ -66,10 +69,33 @@ class DndLibrary:
         for num, x in enumerate(self._results):
             print(x[0])
 
+    def _type_abbreviation(self, element):
+        element_type = element.tag.lower()
+        short_type = ""
+        if element_type == 'monster':
+            short_type = 'Mons'
+        elif element_type == 'item':
+            short_type = 'Item'
+        elif element_type == 'spell':
+            short_type = 'Spel'
+        elif element_type == 'class':
+            short_type = 'Clas'
+        elif element_type == 'race':
+            short_type = 'Race'
+        elif element_type == 'feat':
+            short_type = 'Feat'
+        elif element_type == 'background':
+            short_type = 'Back'
+        else:
+            short_type = element_type
+
+        return short_type
+
     def show_menu(self):
+        clear()
         menu = qprompt.Menu()
         for num, x in enumerate(self._results):
-            menu.add(str(num + 1), x[0])
+            menu.add(str(num + 1), f"{self._type_abbreviation(x[1])} - {x[0]}")
         menu.add('s', 'Return to search bar')
         choice = menu.show(header='==Results==')
         return choice
@@ -135,6 +161,7 @@ class Item:
 
 
 class Monster:
+    # Monster initializes from a xml element "e"
     def __init__(self, e):
         self.name = e.find('name').text
         self.size = e.find('size').text
@@ -281,4 +308,141 @@ class Monster:
             print("==========Legendary Actions==========")
             for legendary_action in self.legendary_actions:
                 legendary_action.display()
+
+
+class Spell:
+    def __init__(self, e):
+        self.name = e.find('name').text
+        self.level = e.find('level').text
+        self.school = e.find('school').text if e.find('school') != None and e.find('school').text != None else 'None'
+        self.ritual = e.find('ritual').text if e.find('ritual') != None and e.find('ritual').text != None else 'None'
+        self.casting_time = e.find('time').text if e.find('time') != None and e.find('time').text != None else 'None'
+        self.range = e.find('range').text if e.find('range') != None and e.find('range').text != None else 'None'
+        self.component_string = e.find('components').text if e.find('components') != None and e.find('components').text != None else 'None'
+        self.duration_string = e.find('duration').text if e.find('duration') != None and e.find('duration').text != None else 'None'
+        self.classes_string = e.find('classes').text if e.find('classes') != None and e.find('classes').text != None else 'None'
+
+        self.description = []
+        lines = e.findall('text')
+        for line in lines:
+            if line.text != None:
+                self.description.append(line.text)
+
+        # print(self.name)
+        # print(e.findall('roll'))
+        rolls = e.findall('roll') if e.findall('roll') != [] and e.findall('roll')[0].text != None else []
+        self.rolls = []
+        for roll in rolls:
+            if roll.text != None:
+                self.rolls.append(roll.text)
+
+
+
+        # parseing component_string so it can be more easly searched later
+        self.materials = 'None'
+        self.verbal_component = 'None'
+        self.somatic_component = 'None'
+        self.material_component = 'None'
+        if self.component_string != 'None':
+            vsm = self.component_string
+            if '(' in self.component_string and ')' in self.component_string:
+                s = self.component_string
+                materials_with_perens = s[s.find("("):s.find(")")+1]
+                # self.materials will not have perens around it
+                self.materials = s[s.find("(")+1:s.find(")")]
+                vsm = s.replace(materials_with_perens, "")
+
+            if 'v' in vsm.lower():
+                self.verbal_component = 'V'
+            if 's' in vsm.lower():
+                self.somatic_component = 'S'
+            if 'm' in vsm.lower():
+                self.material_component = 'M'
+
+
+
+    @property
+    def readable_school(self):
+        school = ''
+        if self.school.lower() == 'a':
+            school = 'Abjuration'
+        elif self.school.lower() == 'c':
+            school = 'Conjuration'
+        elif self.school.lower() == 'd':
+            school = 'Divination'
+        elif self.school.lower() == 'en':
+            school = 'Enchantment'
+        elif self.school.lower() == 'ev':
+            school = 'Evocation'
+        elif self.school.lower() == 'I':
+            school == 'Illusion'
+        elif self.school.lower() == 'N':
+            school = 'Necromancy'
+        elif self.school.lower() == 'T':
+            school = 'Transmutation'
+        else:
+            school = self.school
+
+        return school
+
+    @property
+    def readable_level(self):
+        level = ''
+        if self.level == '0':
+            level = 'Cantrip'
+        elif self.level == '1':
+            level = '1st Level'
+        elif self.level == '2':
+            level = '2nd Level'
+        elif self.level == '3':
+            level = '3rd Level'
+        elif int(self.level) >= 4:
+            level = f"{self.level}th Level"
+        else:
+            level = self.level
+
+        return level
+
+
+    def display(self):
+        wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
+        print(self.name)
+        if self.level == '0':
+            print(f"{self.readable_school} {self.readable_level}")
+        else:
+            if self.ritual != 'None':
+                print(f"{self.readable_level} {self.readable_school} (ritual)")
+            else:
+                print(f"{self.readable_level} {self.readable_school}")
+        if self. casting_time != 'None':
+            print(f"Casting Time: {self.casting_time}")
+        if self.range != 'None':
+            print(f"Range: {self.range}")
+        if self.component_string != 'None':
+            wrapper.width = gts().columns - 14
+            wrapper.subsequent_indent = '            '
+            wrapped_components = wrapper.fill(self.component_string)
+            print(f"Components: {wrapped_components}")
+        if self.duration_string != 'None':
+            print(f"Duration: {self.duration_string}")
+        if self.classes_string != 'None':
+            wrapper.width = gts().columns - 10
+            wrapper.subsequent_indent = '          '
+            wrapped_classes = wrapper.fill(self.classes_string)
+            print(f"Classes: {wrapped_classes}")
+        if self.rolls != []:
+            joined_rolls = " | ".join(self.rolls)
+            print(f"Rolls: {joined_rolls}")
+
+        wrapper.width = gts().columns -2
+        wrapper.subsequent_indent = '  '
+        description_lines = ""
+        for i, line in enumerate(self.description):
+            wrapped_line = wrapper.fill(line) + "\n"
+            description_lines += wrapped_line
+            if i + 1 != len(self.description):
+                description_lines += '\n'
+
+        print('\n==========Description==========')
+        print(f"{description_lines}")
             
