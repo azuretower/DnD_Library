@@ -47,3 +47,4 @@ except KeyboardInterrupt:
     clear()
     print('Bye Bye!')
 useless = False
+this should cause a conflit
