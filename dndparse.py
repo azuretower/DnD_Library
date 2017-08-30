@@ -10,6 +10,7 @@ from utils import clear, get_files
 from displays import *
 from qprompt import *
 from classes import DndLibrary
+# from classes import Item
 
 # sets up color support for windows
 init()
@@ -19,7 +20,7 @@ clear()
 # create a DndLibrary object from the list of directories
 
 Library = DndLibrary(get_files())
-           
+
 try:
     run = True
     while run:
@@ -46,5 +47,3 @@ try:
 except KeyboardInterrupt:
     clear()
     print('Bye Bye!')
-useless = False
-this should cause a conflit

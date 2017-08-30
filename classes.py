@@ -140,25 +140,6 @@ class Ability:
         print(f"- {name_line}")
         print(description_lines)
 
-class Item:
-    def __init__(self, e):
-        self.name = e.find('name').text
-        self.type = e.find('type').text
-        self.magic = e.find('magic').text
-        self.weight = e.find('weight').text
-        self.ac = e.find('ac').text
-        self.strength = e.find('strength').text
-        self.stealth = e.find('stealth').text
-        self.dmg1 = e.find('dmg1').text
-        self.dmg2 = e.find('dmg2').text
-        self.dmgType = e.find('dmgType').text
-        self.property = e.find('property').text
-        self.range = e.find('range').text
-        self.text = e.find('text').text
-        
-
-
-
 
 class Monster:
     # Monster initializes from a xml element "e"
@@ -271,11 +252,11 @@ class Monster:
         if self.resistances != 'None':
             print(f"Resistances: {self.resistances}")
         if self.vulnerilities != 'None':
-            print(f"Vulnerilities: {self.vulnerilities}")
+            print(f"Vulnerabilities: {self.vulnerilities}")
         if self.damage_immunities != 'None':
-            print(f"Damage Immunites: {self.damage_immunities}")
+            print(f"Damage Immunities: {self.damage_immunities}")
         if self.condition_immunites != 'None':
-            print(f"Condition Immunites: {self.condition_immunites}")
+            print(f"Condition Immunities: {self.condition_immunites}")
         if self.senses != 'None':
             print(f"Senses: {self.senses}, passive Perception {self.passive_perception}")
         else:
@@ -308,6 +289,135 @@ class Monster:
             print("==========Legendary Actions==========")
             for legendary_action in self.legendary_actions:
                 legendary_action.display()
+
+
+class Item:
+    def __init__(self, e):
+        self.element = e
+        self.name = e.find('name').text
+        self.type = e.find('type').text
+        self.magic = e.find('magic').text
+        self.value = e.find('value').text if e.find('value') != None and e.find('value').text != None else 'None'
+        self.weight = e.find('weight').text if e.find('weight') != None and e.find('weight').text != None else 'None'
+        self.ac = e.find('ac').text if e.find('ac') != None and e.find('ac').text != None else 'None'
+        self.strength = e.find('strength').text if e.find('strength') != None and e.find('strength').text != None else 'None'
+        self.stealth = e.find('stealth').text if e.find('stealth') != None and e.find('stealth').text != None else 'None'
+        self.dmg1 = e.find('dmg1').text if e.find('dmg1') != None and e.find('dmg1').text != None else 'None'
+        self.dmg2 = e.find('dmg2').text if e.find('dmg2') != None and e.find('dmg2').text != None else 'None'
+        self.dmgType = e.find('dmgType').text if e.find('dmgType') != None and e.find('dmgType').text != None else 'None'
+        self.property = e.find('property').text if e.find('property') != None and e.find('property').text != None else 'None'
+        self.rarity = e.find('rarity').text if e.find('rarity') != None and e.find('rarity').text != None else 'None'
+        self.range = e.find('range').text if e.find('range') != None and e.find('range').text != None else 'None'
+        self.modifier = e.find('modifier').text if e.find('modifier') != None and e.find('modifier').text != None else 'None'
+        self.modifiers = []
+        modifier_list = e.findall('modifier')
+        for modifier in modifier_list:
+            self.modifiers.append(modifier)
+
+        self.description = []
+        lines = e.findall('text')
+        for line in lines:
+            if line.text != None:
+                self.description.append(line.text)
+
+        self.rolls = []
+        roll_list = e.findall('roll')
+        for roll in roll_list:
+            if roll.text != None:
+                self.rolls.append(roll.text)
+
+    @property
+    def readable_type(self):
+        rType = ''
+        if self.type == '$':
+            rType = 'Money'
+        elif self.type.lower() == 'g':
+            rType = 'Adventuring Gear'
+        elif self.type.lower() == 'w':
+            rType = 'Wonderous'
+        elif self.type.lower() == 's':
+            rType = 'Shield'
+        elif self.type.lower() == 'la':
+            rType = 'Light Armor'
+        elif self.type.lower() == 'ma':
+            rType == 'Medium Armor'
+        elif self.type.lower() == 'ha':
+            rType = 'Heavy Armor'
+        elif self.type.lower() == 'wd':
+            rType = 'Wand'
+        elif self.type.lower() == 'm':
+            rType = 'Melee Weapon'
+        elif self.type.lower() == 'r':
+            rType = 'Ranged Weapon'
+        elif self.type.lower() == 'rd':
+            rType = 'Rod'
+        elif self.type.lower() == 'st':
+            rType = 'Staff'
+        elif self.type.lower() == 'sc':
+            rType = 'Scroll'
+        elif self.type.lower() == 'a':
+            rType = 'Ammunition'
+        elif self.type.lower() == 'p':
+            rType = 'Potion'
+        elif self.type.lower() == 'rg':
+            rType = 'Ring'
+        else:
+            rType = self.type
+
+        return rType
+
+
+    def display(self):
+        wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
+        print(self.name)
+        print(f"Type: {self.readable_type}")
+        # print("Type: " + self.readable_type)
+        if self.magic == '1':
+            print("Magic")
+        else:
+            print("Non-Magic")
+        if self.value != 'None':
+            print(f"Value: {self.value}")
+        if self.weight != 'None':
+            print(f"Weight: {self.weight}")
+        if self.ac != 'None':
+            print(f"AC: {self.ac}")
+        if self.strength != 'None':
+            print(f"strength: {self.strength}")
+        if self.stealth != 'None':
+            print(f"stealth: {self.stealth}")
+        if self.dmg1 != 'None':
+            print(f"dmg1: {self.dmg1}")
+        if self.dmg2 != 'None':
+            print(f"dmg2: {self.dmg2}")
+        if self.dmgType != 'None':
+            print(f"dmgType: {self.dmgType}")
+        if self.property != 'None':
+            print(f"property: {self.property}")
+        if self.rarity != 'None':
+            print(f"rarity: {self.rarity}")
+        if self.range != 'None':
+            print(f"range: {self.range}")
+        if self.modifiers != []:
+            print(f"modifiers: {self.modifiers}")
+        if self.rolls != []:
+            joined_rolls = " | ".join(self.rolls)
+            print(f"Rolls: {joined_rolls}")
+
+        wrapper.width = gts().columns -2
+        wrapper.subsequent_indent = '  '
+        description_lines = ""
+        for i, line in enumerate(self.description):
+            wrapped_line = wrapper.fill(line) + "\n"
+            description_lines += wrapped_line
+            if i + 1 != len(self.description):
+                description_lines += '\n'
+
+        print('\n==========Description==========')
+        # print(f"{description_lines}")
+        print(f"{description_lines}")
+
+
 
 
 class Spell:
