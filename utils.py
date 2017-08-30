@@ -43,6 +43,10 @@ class colors:
     TEST = '\x1b[0;30;47m'
     heading = '\x1b[0;37;40m'
 
+def format_input(input_str):
+    answer = input_str
+    
+    return answer
 
 # functions to find and decorate strings 
 def decorate_factory(patt, pre, post):

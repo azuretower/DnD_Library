@@ -6,7 +6,7 @@ import string
 from shutil import get_terminal_size as gts
 from colorama import init
 
-from utils import clear, get_files
+from utils import clear, get_files, format_input
 from displays import *
 from qprompt import *
 from classes import DndLibrary
@@ -25,11 +25,15 @@ try:
     while run:
         if Library.get_state == 0:
             hrule(width=gts().columns, char="~")
-            response = ask_str("What keyword are you looking for?")
-            if response == ":quit":
+            response = ask("What keyword are you looking for?", fmt=format_input, blk=True)
+            if response == ':quit':
                 run = False
                 continue
-            Library.search(response)
+            elif response == ':all':
+                Library.reset_search_history
+                Library.search('')
+            else:
+                Library.search(response)
         elif Library.get_state == 1:
             hrule(width=gts().columns, char="~")
             response = Library.show_menu()

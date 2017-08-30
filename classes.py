@@ -80,7 +80,10 @@ class DndLibrary:
 
     def search(self, keyword):
         found = []
-        self._old_term = keyword
+        if keyword == '':
+            keyword = self._old_term
+        else:
+            self._old_term = keyword
         for x in self._list:
             if keyword.lower() in x[0].lower():
                 found.append((x))
@@ -93,6 +96,10 @@ class DndLibrary:
             self._state = 2
         else:
             self._state = 1
+
+    @property
+    def reset_search_history(self):
+        self._old_term = ''
 
     @property
     def show_results(self):
