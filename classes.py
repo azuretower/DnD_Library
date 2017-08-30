@@ -5,8 +5,8 @@ import qprompt
 from textwrap import TextWrapper
 from shutil import get_terminal_size as gts
 import re
-from utils import colors, clear, decorate_dice_rolls, decorate_higher_levels, decorate_skills
-from utils import print
+from utils import colors, clear
+from utils import s_print, m_print
 
 c = colors
 class DndLibrary:
@@ -130,15 +130,19 @@ class Ability:
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="    ", subsequent_indent="    ")
         if self.attack != 'None':
             attack_split = self.attack.split("|")
-            name_line = f"{self.name} - {attack_split[1].strip()} ({attack_split[2].strip()})"
+            name_line = f"{self.name}"
+            if attack_split[1].strip() != '':
+                name_line += f" +{attack_split[1].strip()}"
+            if attack_split[2].strip() != '':
+                name_line += f" ({attack_split[2].strip()})"
         else:
             name_line = self.name
         description_lines = ""
         for line in self.description:
             description_lines += wrapper.fill(line) + "\n"
 
-        print(f"- {name_line}")
-        print(description_lines)
+        m_print(f"- {name_line}")
+        m_print(description_lines)
 
 class Monster:
     # Monster initializes from a xml element "e"
@@ -381,6 +385,7 @@ class Spell:
 
 
     def display(self):
+        print = s_print
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
         print(self.name)
         if self.level == '0':
