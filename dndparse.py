@@ -19,7 +19,7 @@ clear()
 # create a DndLibrary object from the list of directories
 
 Library = DndLibrary(get_files())
-           
+
 try:
     run = True
     while run:
