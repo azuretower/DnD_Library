@@ -5,8 +5,8 @@ import qprompt
 from textwrap import TextWrapper
 from shutil import get_terminal_size as gts
 import re
-from utils import colors, clear, decorate_dice_rolls, decorate_higher_levels, decorate_skills
-from utils import print
+from utils import colors, clear
+from utils import s_print, m_print
 
 c = colors
 class DndLibrary:
@@ -37,7 +37,7 @@ class DndLibrary:
                     # print(mon.name + " " + mon.readable_size + " " + str(len(mon.traits)))
                     monsters.append(mon)
                     objects.append((x[0].text,x,mon))
-                if x.tag.lower() == 'spell':
+                elif x.tag.lower() == 'spell':
                     spell = Spell(x)
                     objects.append((x[0].text,x,spell))
                 else:
@@ -130,15 +130,19 @@ class Ability:
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="    ", subsequent_indent="    ")
         if self.attack != 'None':
             attack_split = self.attack.split("|")
-            name_line = f"{self.name} - {attack_split[1].strip()} ({attack_split[2].strip()})"
+            name_line = f"{self.name}"
+            if attack_split[1].strip() != '':
+                name_line += f" +{attack_split[1].strip()}"
+            if attack_split[2].strip() != '':
+                name_line += f" ({attack_split[2].strip()})"
         else:
             name_line = self.name
         description_lines = ""
         for line in self.description:
             description_lines += wrapper.fill(line) + "\n"
 
-        print(f"- {name_line}")
-        print(description_lines)
+        m_print(f"- {name_line}")
+        m_print(description_lines)
 
 
 class Monster:
@@ -159,7 +163,7 @@ class Monster:
         self.charisma = e.find('cha').text
         self.saves = e.find('save').text if e.find('save') != None and e.find('save').text != None else 'None'
         self.skills = e.find('skill').text if e.find('skill') != None and e.find('skill').text != None else 'None'
-        self.resistances = e.find('resistance').text if e.find('resistance') != None and e.find('resistance').text != None else 'None'
+        self.resistances = e.find('resist').text if e.find('resist') != None and e.find('resist').text != None else 'None'
         self.vulnerilities = e.find('vulnerable').text if e.find('vulnerable') != None and e.find('vulnerable').text != None else 'None'
         self.damage_immunities = e.find('immune').text if e.find('immune') != None and e.find('immune').text != None else 'None'
         self.condition_immunites = e.find('conditionImmune').text if e.find('conditionImmune') != None and e.find('conditionImmune').text != None else 'None'
@@ -438,15 +442,11 @@ class Spell:
             if line.text != None:
                 self.description.append(line.text)
 
-        # print(self.name)
-        # print(e.findall('roll'))
         rolls = e.findall('roll') if e.findall('roll') != [] and e.findall('roll')[0].text != None else []
         self.rolls = []
         for roll in rolls:
             if roll.text != None:
                 self.rolls.append(roll.text)
-
-
 
         # parseing component_string so it can be more easly searched later
         self.materials = 'None'
@@ -468,7 +468,6 @@ class Spell:
                 self.somatic_component = 'S'
             if 'm' in vsm.lower():
                 self.material_component = 'M'
-
 
 
     @property
@@ -495,6 +494,7 @@ class Spell:
 
         return school
 
+
     @property
     def readable_level(self):
         level = ''
@@ -515,6 +515,7 @@ class Spell:
 
 
     def display(self):
+        print = s_print
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
         print(self.name)
         if self.level == '0':
