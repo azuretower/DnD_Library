@@ -15,6 +15,8 @@ def display(num, results):
         results[num - 1][2].display()
     elif result.tag == 'spell':
         results[num - 1][2].display()
+    elif result.tag == 'item':
+        results[num - 1][2].display()
     else:
         displayNext(result)
 

@@ -87,3 +87,5 @@ def monster_decorator(func):
     return wrapped_func
 
 m_print = monster_decorator(print)
+
+

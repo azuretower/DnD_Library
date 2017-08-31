@@ -40,6 +40,9 @@ class DndLibrary:
                 elif x.tag.lower() == 'spell':
                     spell = Spell(x)
                     objects.append((x[0].text,x,spell))
+                elif x.tag.lower() == 'item' :
+                    item = Item(x)
+                    objects.append((x[0].text,x,item))
                 else:
                     objects.append((x[0].text,x))
 
@@ -295,6 +298,12 @@ class Monster:
                 legendary_action.display()
 
 
+def redundant(word): #Skip redundent expressions like repeats on rarity, properties, etc.
+        if word == 'Rarity:' or word == 'Reach:' or word == 'Thrown:' or word == 'Versatile:' or word == 'Range:' or word == 'Finesse:' or word == 'Light:' or word == 'Heavy:' or word == 'Two-Handed:' or word == 'Ammunition:'or word == 'Loading:' or word == 'Cost:' :
+            return True
+        else:
+            return False
+
 class Item:
     def __init__(self, e):
         self.element = e
@@ -316,13 +325,16 @@ class Item:
         self.modifiers = []
         modifier_list = e.findall('modifier')
         for modifier in modifier_list:
-            self.modifiers.append(modifier)
+            self.modifiers.append(modifier.text)
 
         self.description = []
         lines = e.findall('text')
         for line in lines:
             if line.text != None:
-                self.description.append(line.text)
+                if line.text.split() != []:
+                    firstWord = str(line.text).split()[0] #Skip redundent expressions like repeats on rarity, properties, etc.
+                    if not redundant(firstWord):
+                        self.description.append(line.text)
 
         self.rolls = []
         roll_list = e.findall('roll')
@@ -344,7 +356,7 @@ class Item:
         elif self.type.lower() == 'la':
             rType = 'Light Armor'
         elif self.type.lower() == 'ma':
-            rType == 'Medium Armor'
+            rType = 'Medium Armor'
         elif self.type.lower() == 'ha':
             rType = 'Heavy Armor'
         elif self.type.lower() == 'wd':
@@ -374,12 +386,12 @@ class Item:
     def display(self):
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
         print(self.name)
-        print(f"Type: {self.readable_type}")
-        # print("Type: " + self.readable_type)
+        # print(f"Type: {self.readable_type}")
+        print(self.readable_type)
         if self.magic == '1':
             print("Magic")
-        else:
-            print("Non-Magic")
+        # else:
+        #     print("Non-Magic")
         if self.value != 'None':
             print(f"Value: {self.value}")
         if self.weight != 'None':
@@ -387,23 +399,24 @@ class Item:
         if self.ac != 'None':
             print(f"AC: {self.ac}")
         if self.strength != 'None':
-            print(f"strength: {self.strength}")
-        if self.stealth != 'None':
-            print(f"stealth: {self.stealth}")
+            print(f"Strength: {self.strength}")
+        if self.stealth == 'YES':
+            print("Stealth")
         if self.dmg1 != 'None':
-            print(f"dmg1: {self.dmg1}")
+            print(f"Damage: {self.dmg1}")
         if self.dmg2 != 'None':
-            print(f"dmg2: {self.dmg2}")
+            print(f"Secondary Damage: {self.dmg2}")
         if self.dmgType != 'None':
-            print(f"dmgType: {self.dmgType}")
+            print(f"Damage Type: {self.dmgType}")
         if self.property != 'None':
-            print(f"property: {self.property}")
+            print(f"Property: {self.property}")
         if self.rarity != 'None':
-            print(f"rarity: {self.rarity}")
+            print(f"Rarity: {self.rarity}")
         if self.range != 'None':
-            print(f"range: {self.range}")
+            print(f"Range: {self.range}")
         if self.modifiers != []:
-            print(f"modifiers: {self.modifiers}")
+            joined_modifiers = " | ".join(self.modifiers)
+            print(f"Modifiers: {joined_modifiers}")
         if self.rolls != []:
             joined_rolls = " | ".join(self.rolls)
             print(f"Rolls: {joined_rolls}")
