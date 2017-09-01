@@ -41,42 +41,54 @@ class DndLibrary:
         for root in roots:
             for x in root:
                 if x.tag.lower() == 'monster':
-                    monster = Monster(x)
-                    self.monsters.append(monster)
-                    objects.append((x[0].text,monster))
+                    self.monsters.append(Monster(x))
                 elif x.tag.lower() == 'item':
-                    item = Item(x)
-                    self.items.append(item)
-                    objects.append((x[0].text,item))
+                    self.items.append(Item(x))
                 elif x.tag.lower() == 'spell':
-                    spell = Spell(x)
-                    self.spells.append(spell)
-                    objects.append((x[0].text,spell))
+                    self.spells.append(Spell(x))
                 elif x.tag.lower() == 'class':
-                    character_class = CharacterClass(x)
-                    self.character_classes.append(character_class)
-                    objects.append((x[0].text,character_class))
+                    self.character_classes.append(CharacterClass(x))
                 elif x.tag.lower() == 'race':
-                    race = Race(x)
-                    self.races.append(race)
-                    objects.append((x[0].text,race))
+                    self.races.append(Race(x))
                 elif x.tag.lower() == 'feat':
-                    feat = Feat(x)
-                    self.feats.append(feat)
-                    objects.append((x[0].text,feat))
+                    self.feats.append(Feat(x))
                 elif x.tag.lower() == 'background':
-                    background = Background(x)
-                    self.backgrounds.append(background)
-                    objects.append((x[0].text,background))
+                    self.backgrounds.append(Background(x))
                 else:
-                    generic_entry = GenericEntry(x)
-                    self.generic_entries.append(generic_entry)
-                    objects.append((x[0].text,generic_entry))
+                    self.generic_entries.append(GenericEntry(x))
+
+        self.monsters.sort()
+        self.items.sort()
+        self.spells.sort()
+        self.character_classes.sort()
+        self.races.sort()
+        self.feats.sort()
+        self.backgrounds.sort()
+        self.generic_entries.sort()
+
+        objects.extend(map(lambda mon : (mon.name, mon), self.monsters))
+        objects.extend(map(lambda item : (item.name, item), self.items))
+        objects.extend(map(lambda spell : (spell.name, spell), self.spells))
+        objects.extend(map(lambda char_class : (char_class.name, char_class), self.character_classes))
+        objects.extend(map(lambda race : (race.name, race), self.races))
+        objects.extend(map(lambda feat : (feat.name, feat), self.feats))
+        objects.extend(map(lambda backg : (backg.name, backg), self.backgrounds))
+        objects.extend(map(lambda gen : (gen.name, gen), self.generic_entries))
 
         self._list = objects
         self._old_term = ""
         self._results = []
         self._state = 0
+
+    def display_loaded_count(self):
+        print(f"Monsters Loaded: {len(self.monsters)}")
+        print(f"Items Loaded: {len(self.items)}")
+        print(f"Spells Loaded: {len(self.spells)}")
+        print(f"Classes Loaded: {len(self.character_classes)}")
+        print(f"Races Loaded: {len(self.races)}")
+        print(f"Feats Loaded: {len(self.feats)}")
+        print(f"Backgrounds Loaded: {len(self.backgrounds)}")
+        print(f"Other Loaded: {len(self.generic_entries)}")
 
     def search(self, keyword):
         found = []
@@ -232,6 +244,9 @@ class Monster:
         for legendary_action in legendary_actions_list:
             self.legendary_actions.append(Attribute(legendary_action))
 
+    def __lt__(self, other):
+        return self.name < other.name
+
     @property
     def readable_size(self):
         if self.size.lower() == 't':
@@ -338,6 +353,10 @@ class Item:
     """docstring for Item"""
     def __init__(self, e):
         self.element = e
+        self.name = e.find('name').text
+
+    def __lt__(self, other):
+        return self.name < other.name
 
     def display(self):
         displayNext(self.element)
@@ -390,6 +409,8 @@ class Spell:
             if 'm' in vsm.lower():
                 self.material_component = 'M'
 
+    def __lt__(self, other):
+        return self.name < other.name
 
     @property
     def readable_school(self):
@@ -483,6 +504,10 @@ class CharacterClass:
     """docstring for CharacterClass"""
     def __init__(self, e):
         self.element = e
+        self.name = e.find('name').text
+
+    def __lt__(self, other):
+        return self.name < other.name
 
     def display(self):
         displayNext(self.element)
@@ -492,6 +517,10 @@ class Race:
     """docstring for Race"""
     def __init__(self, e):
         self.element = e
+        self.name = e.find('name').text
+
+    def __lt__(self, other):
+        return self.name < other.name
 
     def display(self):
         displayNext(self.element)
@@ -501,6 +530,10 @@ class Feat:
     """docstring for Feat"""
     def __init__(self, e):
         self.element = e
+        self.name = e.find('name').text
+
+    def __lt__(self, other):
+        return self.name < other.name
 
     def display(self):
         displayNext(self.element)
@@ -510,6 +543,10 @@ class Background:
     """docstring for Background"""
     def __init__(self, e):
         self.element = e
+        self.name = e.find('name').text
+
+    def __lt__(self, other):
+        return self.name < other.name
 
     def display(self):
         displayNext(self.element)
@@ -519,6 +556,10 @@ class GenericEntry:
     """docstring for GenericEntry"""
     def __init__(self, e):
         self.element = e
+        self.name = e.find('name').text
+
+    def __lt__(self, other):
+        return self.name < other.name
 
     def display(self):
         displayNext(self.element)

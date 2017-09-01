@@ -19,6 +19,7 @@ clear()
 # create a DndLibrary object from the list of directories
 
 Library = DndLibrary(get_files())
+Library.display_loaded_count()
 
 try:
     run = True
@@ -32,6 +33,8 @@ try:
             elif response == ':all':
                 Library.reset_search_history
                 Library.search('')
+            elif response == ':reload':
+                os.execv(__file__, sys.argv)
             else:
                 Library.search(response)
         elif Library.get_state == 1:
