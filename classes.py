@@ -467,7 +467,7 @@ class Spell:
             print(f"Rolls: {joined_rolls}")
 
         wrapper.width = gts().columns -2
-        wrapper.subsequent_indent = '  '
+        wrapper.subsequent_indent = ''
         description_lines = ""
         for i, line in enumerate(self.description):
             wrapped_line = wrapper.fill(line) + "\n"
