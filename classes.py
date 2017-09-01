@@ -7,6 +7,7 @@ from shutil import get_terminal_size as gts
 import re
 from utils import colors, clear
 from utils import s_print, m_print
+from displays import displayNext
 
 c = colors
 class DndLibrary:
@@ -28,20 +29,49 @@ class DndLibrary:
                 roots.append(root)
 
         # make each xml entry into an object
-        monsters = []
+        self.monsters = []
+        self.items = []
+        self.spells = []
+        self.character_classes = []
+        self.races = []
+        self.feats = []
+        self.backgrounds = []
+        self.generic_entries = []
         objects = []
         for root in roots:
             for x in root:
                 if x.tag.lower() == 'monster':
-                    mon = Monster(x)
-                    # print(mon.name + " " + mon.readable_size + " " + str(len(mon.traits)))
-                    monsters.append(mon)
-                    objects.append((x[0].text,x,mon))
+                    monster = Monster(x)
+                    self.monsters.append(monster)
+                    objects.append((x[0].text,monster))
+                elif x.tag.lower() == 'item':
+                    item = Item(x)
+                    self.items.append(item)
+                    objects.append((x[0].text,item))
                 elif x.tag.lower() == 'spell':
                     spell = Spell(x)
-                    objects.append((x[0].text,x,spell))
+                    self.spells.append(spell)
+                    objects.append((x[0].text,spell))
+                elif x.tag.lower() == 'class':
+                    character_class = CharacterClass(x)
+                    self.character_classes.append(character_class)
+                    objects.append((x[0].text,character_class))
+                elif x.tag.lower() == 'race':
+                    race = Race(x)
+                    self.races.append(race)
+                    objects.append((x[0].text,race))
+                elif x.tag.lower() == 'feat':
+                    feat = Feat(x)
+                    self.feats.append(feat)
+                    objects.append((x[0].text,feat))
+                elif x.tag.lower() == 'background':
+                    background = Background(x)
+                    self.backgrounds.append(background)
+                    objects.append((x[0].text,background))
                 else:
-                    objects.append((x[0].text,x))
+                    generic_entry = GenericEntry(x)
+                    self.generic_entries.append(generic_entry)
+                    objects.append((x[0].text,generic_entry))
 
         self._list = objects
         self._old_term = ""
@@ -50,7 +80,10 @@ class DndLibrary:
 
     def search(self, keyword):
         found = []
-        self._old_term = keyword
+        if keyword == '':
+            keyword = self._old_term
+        else:
+            self._old_term = keyword
         for x in self._list:
             if keyword.lower() in x[0].lower():
                 found.append((x))
@@ -65,29 +98,33 @@ class DndLibrary:
             self._state = 1
 
     @property
+    def reset_search_history(self):
+        self._old_term = ''
+
+    @property
     def show_results(self):
         for num, x in enumerate(self._results):
             print(x[0])
 
-    def _type_abbreviation(self, element):
-        element_type = element.tag.lower()
+    def _type_abbreviation(self, entry):
+        entry_type = entry.element.tag.lower()
         short_type = ""
-        if element_type == 'monster':
+        if entry_type == 'monster':
             short_type = 'Mons'
-        elif element_type == 'item':
+        elif entry_type == 'item':
             short_type = 'Item'
-        elif element_type == 'spell':
+        elif entry_type == 'spell':
             short_type = 'Spel'
-        elif element_type == 'class':
+        elif entry_type == 'class':
             short_type = 'Clas'
-        elif element_type == 'race':
+        elif entry_type == 'race':
             short_type = 'Race'
-        elif element_type == 'feat':
+        elif entry_type == 'feat':
             short_type = 'Feat'
-        elif element_type == 'background':
+        elif entry_type == 'background':
             short_type = 'Back'
         else:
-            short_type = element_type
+            short_type = entry_type
 
         return short_type
 
@@ -115,7 +152,8 @@ class DndLibrary:
         self._results = []
         
 
-class Ability:
+class Attribute:
+    """Attribute is only used with Monster class"""
     def __init__(self, e):
         self.type = e.tag
         self.name = e.find('name').text
@@ -144,9 +182,11 @@ class Ability:
         m_print(f"- {name_line}")
         m_print(description_lines)
 
+
 class Monster:
-    # Monster initializes from a xml element "e"
+    """Monster initializes from a xml element 'e'"""
     def __init__(self, e):
+        self.element = e
         self.name = e.find('name').text
         self.size = e.find('size').text
         self.type = e.find('type').text
@@ -175,22 +215,22 @@ class Monster:
         self.traits = []
         traits_list = e.findall('trait')
         for trait in traits_list:
-            self.traits.append(Ability(trait))
+            self.traits.append(Attribute(trait))
 
         self.actions = []
         actions_list = e.findall('action')
         for action in actions_list:
-            self.actions.append(Ability(action))
+            self.actions.append(Attribute(action))
 
         self.reactions = []
         reactions_list = e.findall('reaction')
         for reaction in reactions_list:
-            self.reactions.append(Ability(reaction))
+            self.reactions.append(Attribute(reaction))
 
         self.legendary_actions = []
         legendary_actions_list = e.findall('legendary')
         for legendary_action in legendary_actions_list:
-            self.legendary_actions.append(Ability(legendary_action))
+            self.legendary_actions.append(Attribute(legendary_action))
 
     @property
     def readable_size(self):
@@ -294,8 +334,19 @@ class Monster:
                 legendary_action.display()
 
 
-class Spell:
+class Item:
+    """docstring for Item"""
     def __init__(self, e):
+        self.element = e
+
+    def display(self):
+        displayNext(self.element)
+
+
+class Spell:
+    """docstring for Spell class"""
+    def __init__(self, e):
+        self.element = e
         self.name = e.find('name').text
         self.level = e.find('level').text
         self.school = e.find('school').text if e.find('school') != None and e.find('school').text != None else 'None'
@@ -416,7 +467,7 @@ class Spell:
             print(f"Rolls: {joined_rolls}")
 
         wrapper.width = gts().columns -2
-        wrapper.subsequent_indent = '  '
+        wrapper.subsequent_indent = ''
         description_lines = ""
         for i, line in enumerate(self.description):
             wrapped_line = wrapper.fill(line) + "\n"
@@ -426,4 +477,48 @@ class Spell:
 
         print('\n==========Description==========')
         print(f"{description_lines}")
+
+
+class CharacterClass:
+    """docstring for CharacterClass"""
+    def __init__(self, e):
+        self.element = e
+
+    def display(self):
+        displayNext(self.element)
+
+
+class Race:
+    """docstring for Race"""
+    def __init__(self, e):
+        self.element = e
+
+    def display(self):
+        displayNext(self.element)
+
+
+class Feat:
+    """docstring for Feat"""
+    def __init__(self, e):
+        self.element = e
+
+    def display(self):
+        displayNext(self.element)
+
+
+class Background:
+    """docstring for Background"""
+    def __init__(self, e):
+        self.element = e
+
+    def display(self):
+        displayNext(self.element)
+        
             
+class GenericEntry:
+    """docstring for GenericEntry"""
+    def __init__(self, e):
+        self.element = e
+
+    def display(self):
+        displayNext(self.element)
