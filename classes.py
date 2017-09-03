@@ -531,12 +531,33 @@ class Feat:
     def __init__(self, e):
         self.element = e
         self.name = e.find('name').text
+        self.prerequisite = e.find('prerequisite').text if e.find('prerequisite') != None and e.find('prerequisite').text != None else 'None'
+        self.modifier = e.find('modifier').text if e.find('modifier') != None and e.find('modifier').text != None else 'None'
+        self.description = []
+        lines = e.findall('text')
+        for line in lines:
+            if line.text == None:
+                self.description.append('\n')
+            else:
+                self.description.append(line.text)
 
     def __lt__(self, other):
         return self.name < other.name
 
     def display(self):
-        displayNext(self.element)
+        wrapper = TextWrapper(width=gts().columns - 2, initial_indent="  ", subsequent_indent="  ")
+        print(self.name)
+        if self.prerequisite != 'None':
+            print(f"Prerequisite: {self.prerequisite}")
+        if self.modifier != 'None':
+            print(f"Modifier: {self.modifier}")
+        description_lines = ''
+        for line in self.description:
+            wrapped_line = wrapper.fill(line) + '\n'
+            description_lines += wrapped_line
+
+        print('\n==========Description==========\n')
+        print(description_lines)
 
 
 class Background:
