@@ -26,7 +26,7 @@ class DndLibrary:
                 print(file)
                 tree = ET.parse(file)
                 root = tree.getroot()
-                roots.append(root)
+                roots.append((root,file))
 
         # make each xml entry into an object
         self.monsters = []
@@ -39,23 +39,23 @@ class DndLibrary:
         self.generic_entries = []
         objects = []
         for root in roots:
-            for x in root:
+            for x in root[0]:
                 if x.tag.lower() == 'monster':
-                    self.monsters.append(Monster(x))
+                    self.monsters.append(Monster(x, file))
                 elif x.tag.lower() == 'item':
-                    self.items.append(Item(x))
+                    self.items.append(Item(x, file))
                 elif x.tag.lower() == 'spell':
-                    self.spells.append(Spell(x))
+                    self.spells.append(Spell(x, file))
                 elif x.tag.lower() == 'class':
-                    self.character_classes.append(CharacterClass(x))
+                    self.character_classes.append(CharacterClass(x, file))
                 elif x.tag.lower() == 'race':
-                    self.races.append(Race(x))
+                    self.races.append(Race(x, file))
                 elif x.tag.lower() == 'feat':
-                    self.feats.append(Feat(x))
+                    self.feats.append(Feat(x, file))
                 elif x.tag.lower() == 'background':
-                    self.backgrounds.append(Background(x))
+                    self.backgrounds.append(Background(x, file))
                 else:
-                    self.generic_entries.append(GenericEntry(x))
+                    self.generic_entries.append(GenericEntry(x, file))
 
         self.monsters.sort()
         self.items.sort()
@@ -197,8 +197,9 @@ class Attribute:
 
 class Monster:
     """Monster initializes from a xml element 'e'"""
-    def __init__(self, e):
+    def __init__(self, e, file=None):
         self.element = e
+        self.origin_file = file
         self.name = e.find('name').text
         self.size = e.find('size').text
         self.type = e.find('type').text
@@ -351,8 +352,9 @@ class Monster:
 
 class Item:
     """docstring for Item"""
-    def __init__(self, e):
+    def __init__(self, e, file=None):
         self.element = e
+        self.origin_file = file
         self.name = e.find('name').text
 
     def __lt__(self, other):
@@ -364,8 +366,9 @@ class Item:
 
 class Spell:
     """docstring for Spell class"""
-    def __init__(self, e):
+    def __init__(self, e, file=None):
         self.element = e
+        self.origin_file = file
         self.name = e.find('name').text
         self.level = e.find('level').text
         self.school = e.find('school').text if e.find('school') != None and e.find('school').text != None else 'None'
@@ -502,8 +505,9 @@ class Spell:
 
 class CharacterClass:
     """docstring for CharacterClass"""
-    def __init__(self, e):
+    def __init__(self, e, file=None):
         self.element = e
+        self.origin_file = file
         self.name = e.find('name').text
 
     def __lt__(self, other):
@@ -515,8 +519,9 @@ class CharacterClass:
 
 class Race:
     """docstring for Race"""
-    def __init__(self, e):
+    def __init__(self, e, file=None):
         self.element = e
+        self.origin_file = file
         self.name = e.find('name').text
 
     def __lt__(self, other):
@@ -528,8 +533,9 @@ class Race:
 
 class Feat:
     """docstring for Feat"""
-    def __init__(self, e):
+    def __init__(self, e, file=None):
         self.element = e
+        self.origin_file = file
         self.name = e.find('name').text
         self.prerequisite = e.find('prerequisite').text if e.find('prerequisite') != None and e.find('prerequisite').text != None else 'None'
         self.modifier = e.find('modifier').text if e.find('modifier') != None and e.find('modifier').text != None else 'None'
@@ -562,8 +568,9 @@ class Feat:
 
 class Background:
     """docstring for Background"""
-    def __init__(self, e):
+    def __init__(self, e, file=None):
         self.element = e
+        self.origin_file = file
         self.name = e.find('name').text
 
     def __lt__(self, other):
@@ -575,8 +582,9 @@ class Background:
             
 class GenericEntry:
     """docstring for GenericEntry"""
-    def __init__(self, e):
+    def __init__(self, e, file=None):
         self.element = e
+        self.origin_file = file
         self.name = e.find('name').text
 
     def __lt__(self, other):
