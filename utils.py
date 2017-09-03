@@ -25,7 +25,7 @@ def get_files():
     fileLoc.append('/Users/Azure/Dropbox/DnD 5e/DnDAppFiles/Unearthed Arcana')
     fileLoc.append(dir_path + '/DnDAppFiles')
 
-    # create a DndLibrary object from the list of directories
+    # return list of directories to look in
     return fileLoc
         
 
