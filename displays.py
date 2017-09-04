@@ -10,6 +10,7 @@ from shutil import get_terminal_size as gts
 
 def display(num, results):
     clear()
+<<<<<<< HEAD
     result = results[num - 1][1]
     if result.tag == 'monster':
         results[num - 1][2].display()
@@ -19,6 +20,16 @@ def display(num, results):
         results[num - 1][2].display()
     else:
         displayNext(result)
+=======
+    results[num - 1][1].display()
+    # result = results[num - 1][1]
+    # if result.tag == 'monster':
+    #     results[num - 1][2].display()
+    # elif result.tag == 'spell':
+    #     results[num - 1][2].display()
+    # else:
+    #     displayNext(result)
+>>>>>>> master
 
 def displayNext(element):
     for el in element:

@@ -25,7 +25,7 @@ def get_files():
     fileLoc.append('/Users/Azure/Dropbox/DnD 5e/DnDAppFiles/Unearthed Arcana')
     fileLoc.append(dir_path + '/DnDAppFiles')
 
-    # create a DndLibrary object from the list of directories
+    # return list of directories to look in
     return fileLoc
         
 
@@ -43,6 +43,10 @@ class colors:
     TEST = '\x1b[0;30;47m'
     heading = '\x1b[0;37;40m'
 
+def format_input(input_str):
+    answer = input_str
+    
+    return answer
 
 # functions to find and decorate strings 
 def decorate_factory(patt, pre, post):

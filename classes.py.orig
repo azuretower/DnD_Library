@@ -45,6 +45,13 @@ class DndLibrary:
                 elif x.tag.lower() == 'item':
                     self.items.append(Item(x, file))
                 elif x.tag.lower() == 'spell':
+<<<<<<< .merge_file_Ay6kjV
+                    spell = Spell(x)
+                    objects.append((x[0].text,x,spell))
+                elif x.tag.lower() == 'item' :
+                    item = Item(x)
+                    objects.append((x[0].text,x,item))
+=======
                     self.spells.append(Spell(x, file))
                 elif x.tag.lower() == 'class':
                     self.character_classes.append(CharacterClass(x, file))
@@ -54,11 +61,7 @@ class DndLibrary:
                     self.feats.append(Feat(x, file))
                 elif x.tag.lower() == 'background':
                     self.backgrounds.append(Background(x, file))
-                    spell = Spell(x)
-                    objects.append((x[0].text,x,spell))
-                elif x.tag.lower() == 'item' :
-                    item = Item(x)
-                    objects.append((x[0].text,x,item))
+>>>>>>> .merge_file_pldbYY
                 else:
                     self.generic_entries.append(GenericEntry(x, file))
 
@@ -355,6 +358,7 @@ class Monster:
                 legendary_action.display()
 
 
+<<<<<<< .merge_file_Ay6kjV
 def redundant(word): #Skip redundent expressions like repeats on rarity, properties, etc.
         if word == 'Rarity:' or word == 'Reach:' or word == 'Thrown:' or word == 'Versatile:' or word == 'Range:' or word == 'Finesse:' or word == 'Light:' or word == 'Heavy:' or word == 'Two-Handed:' or word == 'Ammunition:'or word == 'Loading:' or word == 'Cost:' :
             return True
@@ -492,6 +496,20 @@ class Item:
         print(f"{description_lines}")
 
 
+=======
+class Item:
+    """docstring for Item"""
+    def __init__(self, e, file=None):
+        self.element = e
+        self.origin_file = file
+        self.name = e.find('name').text
+
+    def __lt__(self, other):
+        return self.name < other.name
+
+    def display(self):
+        displayNext(self.element)
+>>>>>>> .merge_file_pldbYY
 
 
 class Spell:
