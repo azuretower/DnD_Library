@@ -311,11 +311,11 @@ class Monster:
         if self.resistances != 'None':
             print(f"Resistances: {self.resistances}")
         if self.vulnerilities != 'None':
-            print(f"Vulnerilities: {self.vulnerilities}")
+            print(f"Vulnerabilities: {self.vulnerilities}")
         if self.damage_immunities != 'None':
-            print(f"Damage Immunites: {self.damage_immunities}")
+            print(f"Damage Immunities: {self.damage_immunities}")
         if self.condition_immunites != 'None':
-            print(f"Condition Immunites: {self.condition_immunites}")
+            print(f"Condition Immunities: {self.condition_immunites}")
         if self.senses != 'None':
             print(f"Senses: {self.senses}, passive Perception {self.passive_perception}")
         else:
