@@ -20,10 +20,8 @@ clear()
 # create a DndLibrary object from the list of directories
 
 Library = DndLibrary(get_files())
-<<<<<<< HEAD
-=======
 Library.display_loaded_count()
->>>>>>> master
+
 
 try:
     run = True

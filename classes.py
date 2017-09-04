@@ -54,11 +54,6 @@ class DndLibrary:
                     self.feats.append(Feat(x, file))
                 elif x.tag.lower() == 'background':
                     self.backgrounds.append(Background(x, file))
-                    spell = Spell(x)
-                    objects.append((x[0].text,x,spell))
-                elif x.tag.lower() == 'item' :
-                    item = Item(x)
-                    objects.append((x[0].text,x,item))
                 else:
                     self.generic_entries.append(GenericEntry(x, file))
 
@@ -362,7 +357,7 @@ def redundant(word): #Skip redundent expressions like repeats on rarity, propert
             return False
 
 class Item:
-    def __init__(self, e):
+    def __init__(self, e, file=None):
         self.element = e
         self.name = e.find('name').text
         self.type = e.find('type').text
@@ -398,6 +393,9 @@ class Item:
         for roll in roll_list:
             if roll.text != None:
                 self.rolls.append(roll.text)
+
+    def __lt__(self, other):
+        return self.name < other.name
 
     @property
     def readable_type(self):
@@ -458,7 +456,7 @@ class Item:
         if self.strength != 'None':
             print(f"Strength: {self.strength}")
         if self.stealth == 'YES':
-            print("Stealth")
+            print("Stealth disadvantage")
         if self.dmg1 != 'None':
             print(f"Damage: {self.dmg1}")
         if self.dmg2 != 'None':
