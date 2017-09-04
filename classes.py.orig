@@ -1,12 +1,15 @@
 import os
-import fnmatch
-import xml.etree.ElementTree as ET
-import qprompt
-from textwrap import TextWrapper
-from shutil import get_terminal_size as gts
 import re
-from utils import colors, clear
+import fnmatch
+from textwrap import TextWrapper
+import xml.etree.ElementTree as ET
+from shutil import get_terminal_size as gts
+
+import qprompt
+
+from utils import colors, clear, wrap_lines
 from utils import s_print, m_print
+from subclasses import Attribute, BGTrait
 from displays import displayNext
 
 c = colors
@@ -45,13 +48,6 @@ class DndLibrary:
                 elif x.tag.lower() == 'item':
                     self.items.append(Item(x, file))
                 elif x.tag.lower() == 'spell':
-<<<<<<< .merge_file_Ay6kjV
-                    spell = Spell(x)
-                    objects.append((x[0].text,x,spell))
-                elif x.tag.lower() == 'item' :
-                    item = Item(x)
-                    objects.append((x[0].text,x,item))
-=======
                     self.spells.append(Spell(x, file))
                 elif x.tag.lower() == 'class':
                     self.character_classes.append(CharacterClass(x, file))
@@ -61,7 +57,6 @@ class DndLibrary:
                     self.feats.append(Feat(x, file))
                 elif x.tag.lower() == 'background':
                     self.backgrounds.append(Background(x, file))
->>>>>>> .merge_file_pldbYY
                 else:
                     self.generic_entries.append(GenericEntry(x, file))
 
@@ -170,37 +165,6 @@ class DndLibrary:
 
     def clear_results(self):
         self._results = []
-        
-
-class Attribute:
-    """Attribute is only used with Monster class"""
-    def __init__(self, e):
-        self.type = e.tag
-        self.name = e.find('name').text
-        self.attack = e.find('attack').text if e.find('attack') != None else 'None'
-        self.description = []
-        lines = e.findall('text')
-        for line in lines:
-            if line.text != None:
-                self.description.append(line.text)
-
-    def display(self):
-        wrapper = TextWrapper(width=gts().columns - 2, initial_indent="    ", subsequent_indent="    ")
-        if self.attack != 'None':
-            attack_split = self.attack.split("|")
-            name_line = f"{self.name}"
-            if attack_split[1].strip() != '':
-                name_line += f" +{attack_split[1].strip()}"
-            if attack_split[2].strip() != '':
-                name_line += f" ({attack_split[2].strip()})"
-        else:
-            name_line = self.name
-        description_lines = ""
-        for line in self.description:
-            description_lines += wrapper.fill(line) + "\n"
-
-        m_print(f"- {name_line}")
-        m_print(description_lines)
 
 
 class Monster:
@@ -224,7 +188,7 @@ class Monster:
         self.saves = e.find('save').text if e.find('save') != None and e.find('save').text != None else 'None'
         self.skills = e.find('skill').text if e.find('skill') != None and e.find('skill').text != None else 'None'
         self.resistances = e.find('resist').text if e.find('resist') != None and e.find('resist').text != None else 'None'
-        self.vulnerilities = e.find('vulnerable').text if e.find('vulnerable') != None and e.find('vulnerable').text != None else 'None'
+        self.vulnerabilities = e.find('vulnerable').text if e.find('vulnerable') != None and e.find('vulnerable').text != None else 'None'
         self.damage_immunities = e.find('immune').text if e.find('immune') != None and e.find('immune').text != None else 'None'
         self.condition_immunites = e.find('conditionImmune').text if e.find('conditionImmune') != None and e.find('conditionImmune').text != None else 'None'
         self.senses = e.find('senses').text if e.find('senses') != None and e.find('senses').text != None else 'None'
@@ -318,8 +282,13 @@ class Monster:
             print(f"Skills: {self.skills}")
         if self.resistances != 'None':
             print(f"Resistances: {self.resistances}")
+<<<<<<< HEAD
         if self.vulnerilities != 'None':
             print(f"Vulnerabilities: {self.vulnerilities}")
+=======
+        if self.vulnerabilities != 'None':
+            print(f"Vulnerabilities: {self.vulnerabilities}")
+>>>>>>> master
         if self.damage_immunities != 'None':
             print(f"Damage Immunities: {self.damage_immunities}")
         if self.condition_immunites != 'None':
@@ -358,7 +327,6 @@ class Monster:
                 legendary_action.display()
 
 
-<<<<<<< .merge_file_Ay6kjV
 def redundant(word): #Skip redundent expressions like repeats on rarity, properties, etc.
         if word == 'Rarity:' or word == 'Reach:' or word == 'Thrown:' or word == 'Versatile:' or word == 'Range:' or word == 'Finesse:' or word == 'Light:' or word == 'Heavy:' or word == 'Two-Handed:' or word == 'Ammunition:'or word == 'Loading:' or word == 'Cost:' :
             return True
@@ -366,7 +334,7 @@ def redundant(word): #Skip redundent expressions like repeats on rarity, propert
             return False
 
 class Item:
-    def __init__(self, e):
+    def __init__(self, e, file=None):
         self.element = e
         self.name = e.find('name').text
         self.type = e.find('type').text
@@ -379,7 +347,7 @@ class Item:
         self.dmg1 = e.find('dmg1').text if e.find('dmg1') != None and e.find('dmg1').text != None else 'None'
         self.dmg2 = e.find('dmg2').text if e.find('dmg2') != None and e.find('dmg2').text != None else 'None'
         self.dmgType = e.find('dmgType').text if e.find('dmgType') != None and e.find('dmgType').text != None else 'None'
-        self.property = e.find('property').text if e.find('property') != None and e.find('property').text != None else 'None'
+        self.properties = e.find('property').text.split(',') if e.find('property') != None and e.find('property').text != None else 'None'
         self.rarity = e.find('rarity').text if e.find('rarity') != None and e.find('rarity').text != None else 'None'
         self.range = e.find('range').text if e.find('range') != None and e.find('range').text != None else 'None'
         self.modifier = e.find('modifier').text if e.find('modifier') != None and e.find('modifier').text != None else 'None'
@@ -403,45 +371,85 @@ class Item:
             if roll.text != None:
                 self.rolls.append(roll.text)
 
+    def __lt__(self, other):
+        return self.name < other.name
+
+    @property
+    def readable_properties(self):
+        r_property_list = []
+        for entry in self.properties:
+            if entry == 'A':
+                r_property_list.append('Ammunition')
+            elif entry == 'F':
+                r_property_list.append('Finesse')
+            elif entry == 'H':
+                r_property_list.append('Heavy')
+            elif entry == 'L':
+                r_property_list.append('Light')
+            elif entry == 'LD':
+                r_property_list.append('Loading')
+            elif entry == 'R':
+                r_property_list.append('Reach')
+            elif entry == '2H':
+                r_property_list.append('Two-Handed')
+            elif entry == 'V':
+                r_property_list.append('Versatile')
+            elif entry == 'T':
+                r_property_list.append('Thrown')
+            #Excluded Special, because it is always explained in the description
+            #Not sure if there is a type for Improvised
+        return r_property_list
+
+    @property
+    def readable_dmg_type(self):
+        r_dmg_type = ''
+        if self.type == 'B':
+            r_dmg_type = 'Bludgeoning'
+        elif self.type == 'P':
+            r_dmg_type = 'Piercing'
+        elif self.type == 'S':
+            r_dmg_type = 'Slashing'
+        return r_dmg_type
+
     @property
     def readable_type(self):
-        rType = ''
+        r_type = ''
         if self.type == '$':
-            rType = 'Money'
+            r_type = 'Money'
         elif self.type.lower() == 'g':
-            rType = 'Adventuring Gear'
+            r_type = 'Adventuring Gear'
         elif self.type.lower() == 'w':
-            rType = 'Wonderous'
+            r_type = 'Wonderous'
         elif self.type.lower() == 's':
-            rType = 'Shield'
+            r_type = 'Shield'
         elif self.type.lower() == 'la':
-            rType = 'Light Armor'
+            r_type = 'Light Armor'
         elif self.type.lower() == 'ma':
-            rType = 'Medium Armor'
+            r_type = 'Medium Armor'
         elif self.type.lower() == 'ha':
-            rType = 'Heavy Armor'
+            r_type = 'Heavy Armor'
         elif self.type.lower() == 'wd':
-            rType = 'Wand'
+            r_type = 'Wand'
         elif self.type.lower() == 'm':
-            rType = 'Melee Weapon'
+            r_type = 'Melee Weapon'
         elif self.type.lower() == 'r':
-            rType = 'Ranged Weapon'
+            r_type = 'Ranged Weapon'
         elif self.type.lower() == 'rd':
-            rType = 'Rod'
+            r_type = 'Rod'
         elif self.type.lower() == 'st':
-            rType = 'Staff'
+            r_type = 'Staff'
         elif self.type.lower() == 'sc':
-            rType = 'Scroll'
+            r_type = 'Scroll'
         elif self.type.lower() == 'a':
-            rType = 'Ammunition'
+            r_type = 'Ammunition'
         elif self.type.lower() == 'p':
-            rType = 'Potion'
+            r_type = 'Potion'
         elif self.type.lower() == 'rg':
-            rType = 'Ring'
+            r_type = 'Ring'
         else:
-            rType = self.type
+            r_type = self.type
 
-        return rType
+        return r_type
 
 
     def display(self):
@@ -462,15 +470,16 @@ class Item:
         if self.strength != 'None':
             print(f"Strength: {self.strength}")
         if self.stealth == 'YES':
-            print("Stealth")
+            print("Stealth disadvantage")
         if self.dmg1 != 'None':
             print(f"Damage: {self.dmg1}")
         if self.dmg2 != 'None':
             print(f"Secondary Damage: {self.dmg2}")
         if self.dmgType != 'None':
             print(f"Damage Type: {self.dmgType}")
-        if self.property != 'None':
-            print(f"Property: {self.property}")
+        if self.properties != []:
+            joined_properties = ", ".join(self.properties)
+            print(f"Properties: {joined_properties}")
         if self.rarity != 'None':
             print(f"Rarity: {self.rarity}")
         if self.range != 'None':
@@ -496,20 +505,6 @@ class Item:
         print(f"{description_lines}")
 
 
-=======
-class Item:
-    """docstring for Item"""
-    def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
-
-    def __lt__(self, other):
-        return self.name < other.name
-
-    def display(self):
-        displayNext(self.element)
->>>>>>> .merge_file_pldbYY
 
 
 class Spell:
@@ -530,7 +525,9 @@ class Spell:
         self.description = []
         lines = e.findall('text')
         for line in lines:
-            if line.text != None:
+            if line.text == None:
+                self.description.append('\n')
+            else:
                 self.description.append(line.text)
 
         rolls = e.findall('roll') if e.findall('roll') != [] and e.findall('roll')[0].text != None else []
@@ -640,15 +637,9 @@ class Spell:
 
         wrapper.width = gts().columns -2
         wrapper.subsequent_indent = ''
-        description_lines = ""
-        for i, line in enumerate(self.description):
-            wrapped_line = wrapper.fill(line) + "\n"
-            description_lines += wrapped_line
-            if i + 1 != len(self.description):
-                description_lines += '\n'
 
-        print('\n==========Description==========')
-        print(f"{description_lines}")
+        print('\n==========Description==========\n')
+        print(wrap_lines(wrapper, self.description))
 
 
 class CharacterClass:
@@ -705,13 +696,9 @@ class Feat:
             print(f"Prerequisite: {self.prerequisite}")
         if self.modifier != 'None':
             print(f"Modifier: {self.modifier}")
-        description_lines = ''
-        for line in self.description:
-            wrapped_line = wrapper.fill(line) + '\n'
-            description_lines += wrapped_line
 
         print('\n==========Description==========\n')
-        print(description_lines)
+        print(wrap_lines(wrapper, self.description))
 
 
 class Background:
@@ -720,12 +707,24 @@ class Background:
         self.element = e
         self.origin_file = file
         self.name = e.find('name').text
+        self.proficiency = e.find('proficiency').text if e.find('proficiency') != None and e.find('proficiency').text != None else 'None'
+        self.traits = []
+        traits_list = e.findall('trait')
+        for trait in traits_list:
+            self.traits.append(BGTrait(trait))
 
     def __lt__(self, other):
         return self.name < other.name
 
     def display(self):
-        displayNext(self.element)
+        print(self.name)
+        if self.proficiency != 'None':
+            print(f"Proficiency: {self.proficiency}")
+
+        print('\n==========Description==========\n')
+        for trait in self.traits:
+            trait.display()
+
         
             
 class GenericEntry:

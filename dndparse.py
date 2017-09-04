@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-import xml.etree.ElementTree as ET
 import sys, os, os.path
-import string
+import xml.etree.ElementTree as ET
 from shutil import get_terminal_size as gts
+
+from qprompt import *
 from colorama import init
 
 from utils import clear, get_files, format_input
 from displays import *
-from qprompt import *
 from classes import DndLibrary
 # from classes import Item
 
