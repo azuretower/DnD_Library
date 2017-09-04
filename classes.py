@@ -1,12 +1,15 @@
 import os
-import fnmatch
-import xml.etree.ElementTree as ET
-import qprompt
-from textwrap import TextWrapper
-from shutil import get_terminal_size as gts
 import re
-from utils import colors, clear
+import fnmatch
+from textwrap import TextWrapper
+import xml.etree.ElementTree as ET
+from shutil import get_terminal_size as gts
+
+import qprompt
+
+from utils import colors, clear, wrap_lines
 from utils import s_print, m_print
+from subclasses import Attribute, BGTrait
 from displays import displayNext
 
 c = colors
@@ -162,37 +165,6 @@ class DndLibrary:
 
     def clear_results(self):
         self._results = []
-        
-
-class Attribute:
-    """Attribute is only used with Monster class"""
-    def __init__(self, e):
-        self.type = e.tag
-        self.name = e.find('name').text
-        self.attack = e.find('attack').text if e.find('attack') != None else 'None'
-        self.description = []
-        lines = e.findall('text')
-        for line in lines:
-            if line.text != None:
-                self.description.append(line.text)
-
-    def display(self):
-        wrapper = TextWrapper(width=gts().columns - 2, initial_indent="    ", subsequent_indent="    ")
-        if self.attack != 'None':
-            attack_split = self.attack.split("|")
-            name_line = f"{self.name}"
-            if attack_split[1].strip() != '':
-                name_line += f" +{attack_split[1].strip()}"
-            if attack_split[2].strip() != '':
-                name_line += f" ({attack_split[2].strip()})"
-        else:
-            name_line = self.name
-        description_lines = ""
-        for line in self.description:
-            description_lines += wrapper.fill(line) + "\n"
-
-        m_print(f"- {name_line}")
-        m_print(description_lines)
 
 
 class Monster:
@@ -216,7 +188,7 @@ class Monster:
         self.saves = e.find('save').text if e.find('save') != None and e.find('save').text != None else 'None'
         self.skills = e.find('skill').text if e.find('skill') != None and e.find('skill').text != None else 'None'
         self.resistances = e.find('resist').text if e.find('resist') != None and e.find('resist').text != None else 'None'
-        self.vulnerilities = e.find('vulnerable').text if e.find('vulnerable') != None and e.find('vulnerable').text != None else 'None'
+        self.vulnerabilities = e.find('vulnerable').text if e.find('vulnerable') != None and e.find('vulnerable').text != None else 'None'
         self.damage_immunities = e.find('immune').text if e.find('immune') != None and e.find('immune').text != None else 'None'
         self.condition_immunites = e.find('conditionImmune').text if e.find('conditionImmune') != None and e.find('conditionImmune').text != None else 'None'
         self.senses = e.find('senses').text if e.find('senses') != None and e.find('senses').text != None else 'None'
@@ -310,8 +282,8 @@ class Monster:
             print(f"Skills: {self.skills}")
         if self.resistances != 'None':
             print(f"Resistances: {self.resistances}")
-        if self.vulnerilities != 'None':
-            print(f"Vulnerabilities: {self.vulnerilities}")
+        if self.vulnerabilities != 'None':
+            print(f"Vulnerabilities: {self.vulnerabilities}")
         if self.damage_immunities != 'None':
             print(f"Damage Immunities: {self.damage_immunities}")
         if self.condition_immunites != 'None':
@@ -382,7 +354,9 @@ class Spell:
         self.description = []
         lines = e.findall('text')
         for line in lines:
-            if line.text != None:
+            if line.text == None:
+                self.description.append('\n')
+            else:
                 self.description.append(line.text)
 
         rolls = e.findall('roll') if e.findall('roll') != [] and e.findall('roll')[0].text != None else []
@@ -492,15 +466,9 @@ class Spell:
 
         wrapper.width = gts().columns -2
         wrapper.subsequent_indent = ''
-        description_lines = ""
-        for i, line in enumerate(self.description):
-            wrapped_line = wrapper.fill(line) + "\n"
-            description_lines += wrapped_line
-            if i + 1 != len(self.description):
-                description_lines += '\n'
 
-        print('\n==========Description==========')
-        print(f"{description_lines}")
+        print('\n==========Description==========\n')
+        print(wrap_lines(wrapper, self.description))
 
 
 class CharacterClass:
@@ -557,13 +525,9 @@ class Feat:
             print(f"Prerequisite: {self.prerequisite}")
         if self.modifier != 'None':
             print(f"Modifier: {self.modifier}")
-        description_lines = ''
-        for line in self.description:
-            wrapped_line = wrapper.fill(line) + '\n'
-            description_lines += wrapped_line
 
         print('\n==========Description==========\n')
-        print(description_lines)
+        print(wrap_lines(wrapper, self.description))
 
 
 class Background:
@@ -572,12 +536,24 @@ class Background:
         self.element = e
         self.origin_file = file
         self.name = e.find('name').text
+        self.proficiency = e.find('proficiency').text if e.find('proficiency') != None and e.find('proficiency').text != None else 'None'
+        self.traits = []
+        traits_list = e.findall('trait')
+        for trait in traits_list:
+            self.traits.append(BGTrait(trait))
 
     def __lt__(self, other):
         return self.name < other.name
 
     def display(self):
-        displayNext(self.element)
+        print(self.name)
+        if self.proficiency != 'None':
+            print(f"Proficiency: {self.proficiency}")
+
+        print('\n==========Description==========\n')
+        for trait in self.traits:
+            trait.display()
+
         
             
 class GenericEntry:

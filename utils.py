@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import os
 import fnmatch
 import xml.etree.ElementTree as ET
@@ -27,6 +25,14 @@ def get_files():
 
     # return list of directories to look in
     return fileLoc
+
+def wrap_lines(wrapper, lines):
+    description_lines = ''
+    for line in lines:
+        wrapped_line = wrapper.fill(line.strip()) + '\n'
+        description_lines += wrapped_line
+
+    return description_lines
         
 
 class colors:
