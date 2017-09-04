@@ -216,7 +216,7 @@ class Monster:
         self.saves = e.find('save').text if e.find('save') != None and e.find('save').text != None else 'None'
         self.skills = e.find('skill').text if e.find('skill') != None and e.find('skill').text != None else 'None'
         self.resistances = e.find('resist').text if e.find('resist') != None and e.find('resist').text != None else 'None'
-        self.vulnerilities = e.find('vulnerable').text if e.find('vulnerable') != None and e.find('vulnerable').text != None else 'None'
+        self.vulnerabilities = e.find('vulnerable').text if e.find('vulnerable') != None and e.find('vulnerable').text != None else 'None'
         self.damage_immunities = e.find('immune').text if e.find('immune') != None and e.find('immune').text != None else 'None'
         self.condition_immunites = e.find('conditionImmune').text if e.find('conditionImmune') != None and e.find('conditionImmune').text != None else 'None'
         self.senses = e.find('senses').text if e.find('senses') != None and e.find('senses').text != None else 'None'
@@ -310,8 +310,8 @@ class Monster:
             print(f"Skills: {self.skills}")
         if self.resistances != 'None':
             print(f"Resistances: {self.resistances}")
-        if self.vulnerilities != 'None':
-            print(f"Vulnerilities: {self.vulnerilities}")
+        if self.vulnerabilities != 'None':
+            print(f"Vulnerabilities: {self.vulnerabilities}")
         if self.damage_immunities != 'None':
             print(f"Damage Immunites: {self.damage_immunities}")
         if self.condition_immunites != 'None':
