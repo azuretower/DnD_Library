@@ -370,7 +370,7 @@ class Item:
         self.dmg1 = e.find('dmg1').text if e.find('dmg1') != None and e.find('dmg1').text != None else 'None'
         self.dmg2 = e.find('dmg2').text if e.find('dmg2') != None and e.find('dmg2').text != None else 'None'
         self.dmgType = e.find('dmgType').text if e.find('dmgType') != None and e.find('dmgType').text != None else 'None'
-        self.property = e.find('property').text if e.find('property') != None and e.find('property').text != None else 'None'
+        self.properties = e.find('property').text.split(',') if e.find('property') != None and e.find('property').text != None else 'None'
         self.rarity = e.find('rarity').text if e.find('rarity') != None and e.find('rarity').text != None else 'None'
         self.range = e.find('range').text if e.find('range') != None and e.find('range').text != None else 'None'
         self.modifier = e.find('modifier').text if e.find('modifier') != None and e.find('modifier').text != None else 'None'
@@ -398,44 +398,81 @@ class Item:
         return self.name < other.name
 
     @property
-    def readable_type(self):
-        rType = ''
-        if self.type == '$':
-            rType = 'Money'
-        elif self.type.lower() == 'g':
-            rType = 'Adventuring Gear'
-        elif self.type.lower() == 'w':
-            rType = 'Wonderous'
-        elif self.type.lower() == 's':
-            rType = 'Shield'
-        elif self.type.lower() == 'la':
-            rType = 'Light Armor'
-        elif self.type.lower() == 'ma':
-            rType = 'Medium Armor'
-        elif self.type.lower() == 'ha':
-            rType = 'Heavy Armor'
-        elif self.type.lower() == 'wd':
-            rType = 'Wand'
-        elif self.type.lower() == 'm':
-            rType = 'Melee Weapon'
-        elif self.type.lower() == 'r':
-            rType = 'Ranged Weapon'
-        elif self.type.lower() == 'rd':
-            rType = 'Rod'
-        elif self.type.lower() == 'st':
-            rType = 'Staff'
-        elif self.type.lower() == 'sc':
-            rType = 'Scroll'
-        elif self.type.lower() == 'a':
-            rType = 'Ammunition'
-        elif self.type.lower() == 'p':
-            rType = 'Potion'
-        elif self.type.lower() == 'rg':
-            rType = 'Ring'
-        else:
-            rType = self.type
+    def readable_properties(self):
+        r_property_list = []
+        for entry in self.properties:
+            if entry == 'A':
+                r_property_list.append('Ammunition')
+            elif entry == 'F':
+                r_property_list.append('Finesse')
+            elif entry == 'H':
+                r_property_list.append('Heavy')
+            elif entry == 'L':
+                r_property_list.append('Light')
+            elif entry == 'LD':
+                r_property_list.append('Loading')
+            elif entry == 'R':
+                r_property_list.append('Reach')
+            elif entry == '2H':
+                r_property_list.append('Two-Handed')
+            elif entry == 'V':
+                r_property_list.append('Versatile')
+            elif entry == 'T':
+                r_property_list.append('Thrown')
+            #Excluded Special, because it is always explained in the description
+            #Not sure if there is a type for Improvised
+        return r_property_list
 
-        return rType
+    @property
+    def readable_dmg_type(self):
+        r_dmg_type = ''
+        if self.type == 'B':
+            r_dmg_type = 'Bludgeoning'
+        elif self.type == 'P':
+            r_dmg_type = 'Piercing'
+        elif self.type == 'S':
+            r_dmg_type = 'Slashing'
+        return r_dmg_type
+
+    @property
+    def readable_type(self):
+        r_type = ''
+        if self.type == '$':
+            r_type = 'Money'
+        elif self.type.lower() == 'g':
+            r_type = 'Adventuring Gear'
+        elif self.type.lower() == 'w':
+            r_type = 'Wonderous'
+        elif self.type.lower() == 's':
+            r_type = 'Shield'
+        elif self.type.lower() == 'la':
+            r_type = 'Light Armor'
+        elif self.type.lower() == 'ma':
+            r_type = 'Medium Armor'
+        elif self.type.lower() == 'ha':
+            r_type = 'Heavy Armor'
+        elif self.type.lower() == 'wd':
+            r_type = 'Wand'
+        elif self.type.lower() == 'm':
+            r_type = 'Melee Weapon'
+        elif self.type.lower() == 'r':
+            r_type = 'Ranged Weapon'
+        elif self.type.lower() == 'rd':
+            r_type = 'Rod'
+        elif self.type.lower() == 'st':
+            r_type = 'Staff'
+        elif self.type.lower() == 'sc':
+            r_type = 'Scroll'
+        elif self.type.lower() == 'a':
+            r_type = 'Ammunition'
+        elif self.type.lower() == 'p':
+            r_type = 'Potion'
+        elif self.type.lower() == 'rg':
+            r_type = 'Ring'
+        else:
+            r_type = self.type
+
+        return r_type
 
 
     def display(self):
@@ -463,8 +500,9 @@ class Item:
             print(f"Secondary Damage: {self.dmg2}")
         if self.dmgType != 'None':
             print(f"Damage Type: {self.dmgType}")
-        if self.property != 'None':
-            print(f"Property: {self.property}")
+        if self.properties != []:
+            joined_properties = ", ".join(self.properties)
+            print(f"Properties: {joined_properties}")
         if self.rarity != 'None':
             print(f"Rarity: {self.rarity}")
         if self.range != 'None':

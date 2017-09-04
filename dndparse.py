@@ -22,7 +22,6 @@ clear()
 Library = DndLibrary(get_files())
 Library.display_loaded_count()
 
-
 try:
     run = True
     while run:
