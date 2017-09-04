@@ -7,7 +7,7 @@ from shutil import get_terminal_size as gts
 
 import qprompt
 
-from utils import colors, clear
+from utils import colors, clear, wrap_lines
 from utils import s_print, m_print
 from subclasses import Attribute
 from displays import displayNext
@@ -385,7 +385,9 @@ class Spell:
         self.description = []
         lines = e.findall('text')
         for line in lines:
-            if line.text != None:
+            if line.text == None:
+                self.description.append('\n')
+            else:
                 self.description.append(line.text)
 
         rolls = e.findall('roll') if e.findall('roll') != [] and e.findall('roll')[0].text != None else []
@@ -495,15 +497,9 @@ class Spell:
 
         wrapper.width = gts().columns -2
         wrapper.subsequent_indent = ''
-        description_lines = ""
-        for i, line in enumerate(self.description):
-            wrapped_line = wrapper.fill(line) + "\n"
-            description_lines += wrapped_line
-            if i + 1 != len(self.description):
-                description_lines += '\n'
 
-        print('\n==========Description==========')
-        print(f"{description_lines}")
+        print('\n==========Description==========\n')
+        print(wrap_lines(wrapper, self.description))
 
 
 class CharacterClass:
@@ -560,13 +556,9 @@ class Feat:
             print(f"Prerequisite: {self.prerequisite}")
         if self.modifier != 'None':
             print(f"Modifier: {self.modifier}")
-        description_lines = ''
-        for line in self.description:
-            wrapped_line = wrapper.fill(line) + '\n'
-            description_lines += wrapped_line
 
         print('\n==========Description==========\n')
-        print(description_lines)
+        print(wrap_lines(wrapper, self.description))
 
 
 class Background:
