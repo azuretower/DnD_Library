@@ -285,9 +285,9 @@ class Monster:
         if self.vulnerabilities != 'None':
             print(f"Vulnerabilities: {self.vulnerabilities}")
         if self.damage_immunities != 'None':
-            print(f"Damage Immunites: {self.damage_immunities}")
+            print(f"Damage Immunities: {self.damage_immunities}")
         if self.condition_immunites != 'None':
-            print(f"Condition Immunites: {self.condition_immunites}")
+            print(f"Condition Immunities: {self.condition_immunites}")
         if self.senses != 'None':
             print(f"Senses: {self.senses}, passive Perception {self.passive_perception}")
         else:
