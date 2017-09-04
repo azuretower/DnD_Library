@@ -9,7 +9,7 @@ import qprompt
 
 from utils import colors, clear, wrap_lines
 from utils import s_print, m_print
-from subclasses import Attribute
+from subclasses import Attribute, BGTrait
 from displays import displayNext
 
 c = colors
@@ -536,12 +536,24 @@ class Background:
         self.element = e
         self.origin_file = file
         self.name = e.find('name').text
+        self.proficiency = e.find('proficiency').text if e.find('proficiency') != None and e.find('proficiency').text != None else 'None'
+        self.traits = []
+        traits_list = e.findall('trait')
+        for trait in traits_list:
+            self.traits.append(BGTrait(trait))
 
     def __lt__(self, other):
         return self.name < other.name
 
     def display(self):
-        displayNext(self.element)
+        print(self.name)
+        if self.proficiency != 'None':
+            print(f"Proficiency: {self.proficiency}")
+
+        print('\n==========Description==========\n')
+        for trait in self.traits:
+            trait.display()
+
         
             
 class GenericEntry:

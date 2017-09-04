@@ -1,7 +1,7 @@
 from textwrap import TextWrapper
 from shutil import get_terminal_size as gts
 
-from utils import m_print
+from utils import m_print, wrap_lines
 
 class Trait:
     """docstring for Trait"""
@@ -19,9 +19,20 @@ class Trait:
     def display(self):
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
         print(self.name)
+        print(wrap_lines(wrapper, self.description))
 
+
+class BGTrait(Trait):
+    """docstring for BGTrait"""
+    def __init__(self, e):
+        super().__init__(e)
+
+    def display(self):
+        wrapper = TextWrapper(width=gts().columns - 2, initial_indent="    ", subsequent_indent="    ")
+        print(f"- {self.name}")
+        print(f"{wrap_lines(wrapper, self.description)}")
         
-        
+
 class Attribute(Trait):
     """docstring for Attribute
 

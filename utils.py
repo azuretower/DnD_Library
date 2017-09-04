@@ -29,7 +29,7 @@ def get_files():
 def wrap_lines(wrapper, lines):
     description_lines = ''
     for line in lines:
-        wrapped_line = wrapper.fill(line) + '\n'
+        wrapped_line = wrapper.fill(line.strip()) + '\n'
         description_lines += wrapped_line
 
     return description_lines
