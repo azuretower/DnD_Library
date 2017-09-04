@@ -1,12 +1,15 @@
 import os
-import fnmatch
-import xml.etree.ElementTree as ET
-import qprompt
-from textwrap import TextWrapper
-from shutil import get_terminal_size as gts
 import re
+import fnmatch
+from textwrap import TextWrapper
+import xml.etree.ElementTree as ET
+from shutil import get_terminal_size as gts
+
+import qprompt
+
 from utils import colors, clear
 from utils import s_print, m_print
+from subclasses import Attribute
 from displays import displayNext
 
 c = colors
