@@ -9,7 +9,7 @@ import qprompt
 
 from utils import colors, clear, wrap_lines
 from utils import s_print, m_print
-from subclasses import Attribute, BGTrait
+from subclasses import Attribute, Trait
 from displays import displayNext
 
 c = colors
@@ -246,6 +246,8 @@ class Monster(GenericEntry):
             return "Huge"
         elif self.size.lower() == 'g':
             return "Gargantuan"
+        else:
+            return self.size
 
     @property
     def stats(self):
@@ -486,9 +488,40 @@ class Race(GenericEntry):
     """docstring for Race"""
     def __init__(self, e, file=None):
         super().__init__(e, file=None)
+        self.size = e.find('size').text
+        self.speed = e.find('speed').text
+        self.ability = e.find('ability').text if e.find('ability') != None and e.find('ability').text != None else 'None'
+        self.traits = []
+        traits_list = e.findall('trait')
+        for trait in traits_list:
+            self.traits.append(Trait(trait))
+
+    @property
+    def readable_size(self):
+        if self.size.lower() == 't':
+            return "Tiny"
+        elif self.size.lower() == 's':
+            return "Small"
+        elif self.size.lower() == 'm':
+            return "Medium"
+        elif self.size.lower() == 'l':
+            return "Large"
+        elif self.size.lower() == 'h':
+            return "Huge"
+        elif self.size.lower() == 'g':
+            return "Gargantuan"
+        else:
+            return self.size
 
     def display(self):
-        displayNext(self.element)
+        print(f"{self.name} - {self.readable_size}")
+        print(f"Speed: {self.speed}")
+        if self.ability != 'None':
+            print(f"Ability Scores: {self.ability}")
+
+        print('\n==========Description==========\n')
+        for trait in self.traits:
+            trait.display()
 
 
 class Feat(GenericEntry):
@@ -525,7 +558,7 @@ class Background(GenericEntry):
         self.traits = []
         traits_list = e.findall('trait')
         for trait in traits_list:
-            self.traits.append(BGTrait(trait))
+            self.traits.append(Trait(trait))
 
     def display(self):
         print(self.name)
