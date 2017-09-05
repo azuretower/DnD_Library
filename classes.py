@@ -359,7 +359,6 @@ class Item(GenericEntry):
         self.properties = e.find('property').text.split(',') if e.find('property') != None and e.find('property').text != None else 'None'
         self.rarity = e.find('rarity').text if e.find('rarity') != None and e.find('rarity').text != None else 'None'
         self.range = e.find('range').text if e.find('range') != None and e.find('range').text != None else 'None'
-        self.modifier = e.find('modifier').text if e.find('modifier') != None and e.find('modifier').text != None else 'None'
         self.modifiers = []
         modifier_list = e.findall('modifier')
         for modifier in modifier_list:
@@ -371,8 +370,9 @@ class Item(GenericEntry):
             if line.text != None:
                 if line.text.split() != []:
                     firstWord = str(line.text).split()[0] #Skip redundent expressions like repeats on rarity, properties, etc.
-                    if not redundant(firstWord):
-                        self.description.append(line.text)
+                    self.description.append(line.text)
+            else:
+                self.description.append('\n')
 
         self.rolls = []
         roll_list = e.findall('roll')
@@ -402,18 +402,19 @@ class Item(GenericEntry):
                 r_property_list.append('Versatile')
             elif entry == 'T':
                 r_property_list.append('Thrown')
-            #Excluded Special, because it is always explained in the description
+            elif entry == 'S':
+                r_property_list.append('Special')
             #Not sure if there is a type for Improvised
         return r_property_list
 
     @property
     def readable_dmg_type(self):
         r_dmg_type = ''
-        if self.type == 'B':
+        if self.dmgType == 'B':
             r_dmg_type = 'Bludgeoning'
-        elif self.type == 'P':
+        elif self.dmgType == 'P':
             r_dmg_type = 'Piercing'
-        elif self.type == 'S':
+        elif self.dmgType == 'S':
             r_dmg_type = 'Slashing'
         return r_dmg_type
 
@@ -462,10 +463,8 @@ class Item(GenericEntry):
         print(self.name)
         # print(f"Type: {self.readable_type}")
         print(self.readable_type)
-        if self.magic == '1':
-            print("Magic")
-        # else:
-        #     print("Non-Magic")
+        # if self.magic == '1':
+        #     print("Magic")
         if self.value != 'None':
             print(f"Value: {self.value}")
         if self.weight != 'None':
@@ -481,9 +480,9 @@ class Item(GenericEntry):
         if self.dmg2 != 'None':
             print(f"Secondary Damage: {self.dmg2}")
         if self.dmgType != 'None':
-            print(f"Damage Type: {self.dmgType}")
+            print("Damage Type: " + self.readable_dmg_type)
         if self.properties != []:
-            joined_properties = ", ".join(self.properties)
+            joined_properties = ", ".join(self.readable_properties)
             print(f"Properties: {joined_properties}")
         if self.rarity != 'None':
             print(f"Rarity: {self.rarity}")
