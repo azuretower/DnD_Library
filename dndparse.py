@@ -26,13 +26,13 @@ try:
         if Library.get_state == 0:
             hrule(width=gts().columns, char="~")
             response = ask("What keyword are you looking for?", fmt=format_input, blk=True)
-            if response == ':quit':
+            if response.strip() in ':quit':
                 run = False
                 continue
-            elif response == ':all':
+            elif response.strip() in ':all':
                 Library.reset_search_history
                 Library.search('')
-            elif response == ':reload':
+            elif response.strip() in ':reload':
                 os.execv(__file__, sys.argv)
             else:
                 Library.search(response)
