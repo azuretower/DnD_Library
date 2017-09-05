@@ -3,7 +3,7 @@ from shutil import get_terminal_size as gts
 
 from utils import m_print, wrap_lines
 
-class Trait:
+class GenericTrait:
     """docstring for Trait"""
     def __init__(self, e):
         self.type = e.tag
@@ -16,13 +16,16 @@ class Trait:
             else:
                 self.description.append(line.text)
 
+    def __repr__(self):
+        return f"Class: {self.__class__.__name__} Name: {self.name}"
+
     def display(self):
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
         print(self.name)
         print(wrap_lines(wrapper, self.description))
 
 
-class BGTrait(Trait):
+class Trait(GenericTrait):
     """docstring for BGTrait"""
     def __init__(self, e):
         super().__init__(e)
@@ -33,7 +36,7 @@ class BGTrait(Trait):
         print(f"{wrap_lines(wrapper, self.description)}")
         
 
-class Attribute(Trait):
+class Attribute(GenericTrait):
     """docstring for Attribute
 
     For use with the Monster class"""

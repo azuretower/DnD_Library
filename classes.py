@@ -9,7 +9,7 @@ import qprompt
 
 from utils import colors, clear, wrap_lines
 from utils import s_print, m_print
-from subclasses import Attribute, BGTrait
+from subclasses import Attribute, Trait
 from displays import displayNext
 
 c = colors
@@ -167,12 +167,27 @@ class DndLibrary:
         self._results = []
 
 
-class Monster:
-    """Monster initializes from a xml element 'e'"""
+class GenericEntry:
+    """docstring for GenericEntry"""
     def __init__(self, e, file=None):
         self.element = e
         self.origin_file = file
         self.name = e.find('name').text
+
+    def __lt__(self, other):
+        return self.name < other.name
+
+    def __repr__(self):
+        return f"Class: {self.__class__.__name__} Name: {self.name}"
+
+    def display(self):
+        displayNext(self.element)
+
+
+class Monster(GenericEntry):
+    """Monster initializes from a xml element 'e'"""
+    def __init__(self, e, file=None):
+        super().__init__(e, file=None)
         self.size = e.find('size').text
         self.type = e.find('type').text
         self.alignment = e.find('alignment').text
@@ -217,9 +232,6 @@ class Monster:
         for legendary_action in legendary_actions_list:
             self.legendary_actions.append(Attribute(legendary_action))
 
-    def __lt__(self, other):
-        return self.name < other.name
-
     @property
     def readable_size(self):
         if self.size.lower() == 't':
@@ -234,6 +246,8 @@ class Monster:
             return "Huge"
         elif self.size.lower() == 'g':
             return "Gargantuan"
+        else:
+            return self.size
 
     @property
     def stats(self):
@@ -328,14 +342,12 @@ def redundant(word): #Skip redundent expressions like repeats on rarity, propert
         else:
             return False
 
-class Item:
+class Item(GenericEntry):
     """docstring for Item"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
+        super().__init__(e, file=None)
         self.type = e.find('type').text
-        self.magic = e.find('magic').text
+        self.magic = e.find('magic').text if e.find('magic') != None and e.find('magic').text != None else 'None'
         self.value = e.find('value').text if e.find('value') != None and e.find('value').text != None else 'None'
         self.weight = e.find('weight').text if e.find('weight') != None and e.find('weight').text != None else 'None'
         self.ac = e.find('ac').text if e.find('ac') != None and e.find('ac').text != None else 'None'
@@ -367,9 +379,6 @@ class Item:
         for roll in roll_list:
             if roll.text != None:
                 self.rolls.append(roll.text)
-
-    def __lt__(self, other):
-        return self.name < other.name
 
     @property
     def readable_properties(self):
@@ -448,7 +457,6 @@ class Item:
 
         return r_type
 
-
     def display(self):
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
         print(self.name)
@@ -502,14 +510,10 @@ class Item:
         print(f"{description_lines}")
 
 
-
-
-class Spell:
+class Spell(GenericEntry):
     """docstring for Spell class"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
+        super().__init__(e, file=None)
         self.level = e.find('level').text
         self.school = e.find('school').text if e.find('school') != None and e.find('school').text != None else 'None'
         self.ritual = e.find('ritual').text if e.find('ritual') != None and e.find('ritual').text != None else 'None'
@@ -554,9 +558,6 @@ class Spell:
             if 'm' in vsm.lower():
                 self.material_component = 'M'
 
-    def __lt__(self, other):
-        return self.name < other.name
-
     @property
     def readable_school(self):
         school = ''
@@ -581,7 +582,6 @@ class Spell:
 
         return school
 
-
     @property
     def readable_level(self):
         level = ''
@@ -599,7 +599,6 @@ class Spell:
             level = self.level
 
         return level
-
 
     def display(self):
         print = s_print
@@ -639,40 +638,59 @@ class Spell:
         print(wrap_lines(wrapper, self.description))
 
 
-class CharacterClass:
+class CharacterClass(GenericEntry):
     """docstring for CharacterClass"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
-
-    def __lt__(self, other):
-        return self.name < other.name
+        super().__init__(e, file=None)
 
     def display(self):
         displayNext(self.element)
 
 
-class Race:
+class Race(GenericEntry):
     """docstring for Race"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
+        super().__init__(e, file=None)
+        self.size = e.find('size').text
+        self.speed = e.find('speed').text
+        self.ability = e.find('ability').text if e.find('ability') != None and e.find('ability').text != None else 'None'
+        self.traits = []
+        traits_list = e.findall('trait')
+        for trait in traits_list:
+            self.traits.append(Trait(trait))
 
-    def __lt__(self, other):
-        return self.name < other.name
+    @property
+    def readable_size(self):
+        if self.size.lower() == 't':
+            return "Tiny"
+        elif self.size.lower() == 's':
+            return "Small"
+        elif self.size.lower() == 'm':
+            return "Medium"
+        elif self.size.lower() == 'l':
+            return "Large"
+        elif self.size.lower() == 'h':
+            return "Huge"
+        elif self.size.lower() == 'g':
+            return "Gargantuan"
+        else:
+            return self.size
 
     def display(self):
-        displayNext(self.element)
+        print(f"{self.name} - {self.readable_size}")
+        print(f"Speed: {self.speed}")
+        if self.ability != 'None':
+            print(f"Ability Scores: {self.ability}")
+
+        print('\n==========Description==========\n')
+        for trait in self.traits:
+            trait.display()
 
 
-class Feat:
+class Feat(GenericEntry):
     """docstring for Feat"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
+        super().__init__(e, file=None)
         self.prerequisite = e.find('prerequisite').text if e.find('prerequisite') != None and e.find('prerequisite').text != None else 'None'
         self.modifier = e.find('modifier').text if e.find('modifier') != None and e.find('modifier').text != None else 'None'
         self.description = []
@@ -682,9 +700,6 @@ class Feat:
                 self.description.append('\n')
             else:
                 self.description.append(line.text)
-
-    def __lt__(self, other):
-        return self.name < other.name
 
     def display(self):
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="  ", subsequent_indent="  ")
@@ -698,20 +713,15 @@ class Feat:
         print(wrap_lines(wrapper, self.description))
 
 
-class Background:
+class Background(GenericEntry):
     """docstring for Background"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
+        super().__init__(e, file=None)
         self.proficiency = e.find('proficiency').text if e.find('proficiency') != None and e.find('proficiency').text != None else 'None'
         self.traits = []
         traits_list = e.findall('trait')
         for trait in traits_list:
-            self.traits.append(BGTrait(trait))
-
-    def __lt__(self, other):
-        return self.name < other.name
+            self.traits.append(Trait(trait))
 
     def display(self):
         print(self.name)
@@ -723,16 +733,3 @@ class Background:
             trait.display()
 
         
-            
-class GenericEntry:
-    """docstring for GenericEntry"""
-    def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
-
-    def __lt__(self, other):
-        return self.name < other.name
-
-    def display(self):
-        displayNext(self.element)
