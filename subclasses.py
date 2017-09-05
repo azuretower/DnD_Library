@@ -16,6 +16,9 @@ class Trait:
             else:
                 self.description.append(line.text)
 
+    def __repr__(self):
+        return f"Class: {self.__class__.__name__} Name: {self.name}"
+
     def display(self):
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
         print(self.name)

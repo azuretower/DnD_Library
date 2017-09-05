@@ -167,12 +167,27 @@ class DndLibrary:
         self._results = []
 
 
-class Monster:
-    """Monster initializes from a xml element 'e'"""
+class GenericEntry:
+    """docstring for GenericEntry"""
     def __init__(self, e, file=None):
         self.element = e
         self.origin_file = file
         self.name = e.find('name').text
+
+    def __lt__(self, other):
+        return self.name < other.name
+
+    def __repr__(self):
+        return f"Class: {self.__class__.__name__} Name: {self.name}"
+
+    def display(self):
+        displayNext(self.element)
+
+
+class Monster(GenericEntry):
+    """Monster initializes from a xml element 'e'"""
+    def __init__(self, e, file=None):
+        super().__init__(e, file=None)
         self.size = e.find('size').text
         self.type = e.find('type').text
         self.alignment = e.find('alignment').text
@@ -216,9 +231,6 @@ class Monster:
         legendary_actions_list = e.findall('legendary')
         for legendary_action in legendary_actions_list:
             self.legendary_actions.append(Attribute(legendary_action))
-
-    def __lt__(self, other):
-        return self.name < other.name
 
     @property
     def readable_size(self):
@@ -322,26 +334,19 @@ class Monster:
                 legendary_action.display()
 
 
-class Item:
+class Item(GenericEntry):
     """docstring for Item"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
-
-    def __lt__(self, other):
-        return self.name < other.name
+        super().__init__(e, file=None)
 
     def display(self):
         displayNext(self.element)
 
 
-class Spell:
+class Spell(GenericEntry):
     """docstring for Spell class"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
+        super().__init__(e, file=None)
         self.level = e.find('level').text
         self.school = e.find('school').text if e.find('school') != None and e.find('school').text != None else 'None'
         self.ritual = e.find('ritual').text if e.find('ritual') != None and e.find('ritual').text != None else 'None'
@@ -385,9 +390,6 @@ class Spell:
                 self.somatic_component = 'S'
             if 'm' in vsm.lower():
                 self.material_component = 'M'
-
-    def __lt__(self, other):
-        return self.name < other.name
 
     @property
     def readable_school(self):
@@ -471,40 +473,28 @@ class Spell:
         print(wrap_lines(wrapper, self.description))
 
 
-class CharacterClass:
+class CharacterClass(GenericEntry):
     """docstring for CharacterClass"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
-
-    def __lt__(self, other):
-        return self.name < other.name
+        super().__init__(e, file=None)
 
     def display(self):
         displayNext(self.element)
 
 
-class Race:
+class Race(GenericEntry):
     """docstring for Race"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
-
-    def __lt__(self, other):
-        return self.name < other.name
+        super().__init__(e, file=None)
 
     def display(self):
         displayNext(self.element)
 
 
-class Feat:
+class Feat(GenericEntry):
     """docstring for Feat"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
+        super().__init__(e, file=None)
         self.prerequisite = e.find('prerequisite').text if e.find('prerequisite') != None and e.find('prerequisite').text != None else 'None'
         self.modifier = e.find('modifier').text if e.find('modifier') != None and e.find('modifier').text != None else 'None'
         self.description = []
@@ -514,9 +504,6 @@ class Feat:
                 self.description.append('\n')
             else:
                 self.description.append(line.text)
-
-    def __lt__(self, other):
-        return self.name < other.name
 
     def display(self):
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="  ", subsequent_indent="  ")
@@ -530,20 +517,15 @@ class Feat:
         print(wrap_lines(wrapper, self.description))
 
 
-class Background:
+class Background(GenericEntry):
     """docstring for Background"""
     def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
+        super().__init__(e, file=None)
         self.proficiency = e.find('proficiency').text if e.find('proficiency') != None and e.find('proficiency').text != None else 'None'
         self.traits = []
         traits_list = e.findall('trait')
         for trait in traits_list:
             self.traits.append(BGTrait(trait))
-
-    def __lt__(self, other):
-        return self.name < other.name
 
     def display(self):
         print(self.name)
@@ -555,16 +537,3 @@ class Background:
             trait.display()
 
         
-            
-class GenericEntry:
-    """docstring for GenericEntry"""
-    def __init__(self, e, file=None):
-        self.element = e
-        self.origin_file = file
-        self.name = e.find('name').text
-
-    def __lt__(self, other):
-        return self.name < other.name
-
-    def display(self):
-        displayNext(self.element)
