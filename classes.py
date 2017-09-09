@@ -336,12 +336,6 @@ class Monster(GenericEntry):
                 legendary_action.display()
 
 
-def redundant(word): #Skip redundent expressions like repeats on rarity, properties, etc.
-        if word == 'Rarity:' or word == 'Reach:' or word == 'Thrown:' or word == 'Versatile:' or word == 'Range:' or word == 'Finesse:' or word == 'Light:' or word == 'Heavy:' or word == 'Two-Handed:' or word == 'Ammunition:'or word == 'Loading:' or word == 'Cost:' :
-            return True
-        else:
-            return False
-
 class Item(GenericEntry):
     """docstring for Item"""
     def __init__(self, e, file=None):
@@ -461,10 +455,7 @@ class Item(GenericEntry):
     def display(self):
         wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
         print(self.name)
-        # print(f"Type: {self.readable_type}")
         print(self.readable_type)
-        # if self.magic == '1':
-        #     print("Magic")
         if self.value != 'None':
             print(f"Value: {self.value}")
         if self.weight != 'None':
@@ -505,7 +496,6 @@ class Item(GenericEntry):
                 description_lines += '\n'
 
         print('\n==========Description==========')
-        # print(f"{description_lines}")
         print(f"{description_lines}")
 
 
