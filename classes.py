@@ -472,8 +472,11 @@ class Item(GenericEntry):
             print(f"Secondary Damage: {self.dmg2}")
         if self.dmgType != 'None':
             print("Damage Type: " + self.readable_dmg_type)
-        if self.properties != []:
+        if self.properties != 'None':
             joined_properties = ", ".join(self.readable_properties)
+
+            print(self.properties)
+
             print(f"Properties: {joined_properties}")
         if self.rarity != 'None':
             print(f"Rarity: {self.rarity}")
