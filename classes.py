@@ -7,7 +7,7 @@ from shutil import get_terminal_size as gts
 
 import qprompt
 
-from utils import colors, clear, wrap_lines
+from utils import colors, clear, wrap_lines, redundant
 from utils import s_print, m_print
 from subclasses import Attribute, Trait
 from displays import displayNext
@@ -474,9 +474,6 @@ class Item(GenericEntry):
             print("Damage Type: " + self.readable_dmg_type)
         if self.properties != 'None':
             joined_properties = ", ".join(self.readable_properties)
-
-            print(self.properties)
-
             print(f"Properties: {joined_properties}")
         if self.rarity != 'None':
             print(f"Rarity: {self.rarity}")

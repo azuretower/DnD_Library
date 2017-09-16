@@ -9,7 +9,6 @@ from colorama import init
 from utils import clear, get_files, format_input
 from displays import *
 from classes import DndLibrary
-# from classes import Item
 
 # sets up color support for windows
 init()
@@ -27,14 +26,16 @@ try:
         if Library.get_state == 0:
             hrule(width=gts().columns, char="~")
             response = ask("What keyword are you looking for?", fmt=format_input, blk=True)
-            if response.strip() in ':quit':
+            if response.strip() in ':quit' and response.startswith(':'):
                 run = False
                 continue
-            elif response.strip() in ':all':
+            elif response.strip() in ':all' and response.startswith(':'):
                 Library.reset_search_history
                 Library.search('')
-            elif response.strip() in ':reload':
+            elif response.strip() in ':reload' and response.startswith(':'):
                 os.execv(__file__, sys.argv)
+            elif response.strip() == ':roll' and response.startswith(':'):
+                pass
             else:
                 Library.search(response)
         elif Library.get_state == 1:
