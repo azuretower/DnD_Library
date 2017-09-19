@@ -96,4 +96,13 @@ def monster_decorator(func):
         return func(d)
     return wrapped_func
 
+#Skip redundent expressions like repeats on rarity, properties, etc.
+def redundant(word): 
+        if word == 'Rarity:' or word == 'Reach:' or word == 'Thrown:' or word == 'Versatile:' or word == 'Range:' or word == 'Finesse:' or word == 'Light:' or word == 'Heavy:' or word == 'Two-Handed:' or word == 'Ammunition:'or word == 'Loading:' or word == 'Cost:' :
+            return True
+        else:
+            return False
+
 m_print = monster_decorator(print)
+
+

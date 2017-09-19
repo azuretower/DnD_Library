@@ -10,6 +10,7 @@ def display(num, results):
     clear()
     results[num - 1][1].display()
 
+
 def displayNext(element):
     for el in element:
         if el.text:

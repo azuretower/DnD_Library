@@ -7,7 +7,7 @@ from shutil import get_terminal_size as gts
 
 import qprompt
 
-from utils import colors, clear, wrap_lines
+from utils import colors, clear, wrap_lines, redundant
 from utils import s_print, m_print
 from subclasses import Attribute, Trait
 from displays import displayNext
@@ -340,9 +340,163 @@ class Item(GenericEntry):
     """docstring for Item"""
     def __init__(self, e, file=None):
         super().__init__(e, file=None)
+        self.type = e.find('type').text
+        self.magic = e.find('magic').text if e.find('magic') != None and e.find('magic').text != None else 'None'
+        self.value = e.find('value').text if e.find('value') != None and e.find('value').text != None else 'None'
+        self.weight = e.find('weight').text if e.find('weight') != None and e.find('weight').text != None else 'None'
+        self.ac = e.find('ac').text if e.find('ac') != None and e.find('ac').text != None else 'None'
+        self.strength = e.find('strength').text if e.find('strength') != None and e.find('strength').text != None else 'None'
+        self.stealth = e.find('stealth').text if e.find('stealth') != None and e.find('stealth').text != None else 'None'
+        self.dmg1 = e.find('dmg1').text if e.find('dmg1') != None and e.find('dmg1').text != None else 'None'
+        self.dmg2 = e.find('dmg2').text if e.find('dmg2') != None and e.find('dmg2').text != None else 'None'
+        self.dmgType = e.find('dmgType').text if e.find('dmgType') != None and e.find('dmgType').text != None else 'None'
+        self.properties = e.find('property').text.split(',') if e.find('property') != None and e.find('property').text != None else 'None'
+        self.rarity = e.find('rarity').text if e.find('rarity') != None and e.find('rarity').text != None else 'None'
+        self.range = e.find('range').text if e.find('range') != None and e.find('range').text != None else 'None'
+        self.modifiers = []
+        modifier_list = e.findall('modifier')
+        for modifier in modifier_list:
+            self.modifiers.append(modifier.text)
+
+        self.description = []
+        lines = e.findall('text')
+        for line in lines:
+            if line.text != None:
+                if line.text.split() != []:
+                    firstWord = str(line.text).split()[0] #Skip redundent expressions like repeats on rarity, properties, etc.
+                    self.description.append(line.text)
+            else:
+                self.description.append('\n')
+
+        self.rolls = []
+        roll_list = e.findall('roll')
+        for roll in roll_list:
+            if roll.text != None:
+                self.rolls.append(roll.text)
+
+    @property
+    def readable_properties(self):
+        r_property_list = []
+        for entry in self.properties:
+            if entry == 'A':
+                r_property_list.append('Ammunition')
+            elif entry == 'F':
+                r_property_list.append('Finesse')
+            elif entry == 'H':
+                r_property_list.append('Heavy')
+            elif entry == 'L':
+                r_property_list.append('Light')
+            elif entry == 'LD':
+                r_property_list.append('Loading')
+            elif entry == 'R':
+                r_property_list.append('Reach')
+            elif entry == '2H':
+                r_property_list.append('Two-Handed')
+            elif entry == 'V':
+                r_property_list.append('Versatile')
+            elif entry == 'T':
+                r_property_list.append('Thrown')
+            elif entry == 'S':
+                r_property_list.append('Special')
+            #Not sure if there is a type for Improvised
+        return r_property_list
+
+    @property
+    def readable_dmg_type(self):
+        r_dmg_type = ''
+        if self.dmgType == 'B':
+            r_dmg_type = 'Bludgeoning'
+        elif self.dmgType == 'P':
+            r_dmg_type = 'Piercing'
+        elif self.dmgType == 'S':
+            r_dmg_type = 'Slashing'
+        return r_dmg_type
+
+    @property
+    def readable_type(self):
+        r_type = ''
+        if self.type == '$':
+            r_type = 'Money'
+        elif self.type.lower() == 'g':
+            r_type = 'Adventuring Gear'
+        elif self.type.lower() == 'w':
+            r_type = 'Wonderous'
+        elif self.type.lower() == 's':
+            r_type = 'Shield'
+        elif self.type.lower() == 'la':
+            r_type = 'Light Armor'
+        elif self.type.lower() == 'ma':
+            r_type = 'Medium Armor'
+        elif self.type.lower() == 'ha':
+            r_type = 'Heavy Armor'
+        elif self.type.lower() == 'wd':
+            r_type = 'Wand'
+        elif self.type.lower() == 'm':
+            r_type = 'Melee Weapon'
+        elif self.type.lower() == 'r':
+            r_type = 'Ranged Weapon'
+        elif self.type.lower() == 'rd':
+            r_type = 'Rod'
+        elif self.type.lower() == 'st':
+            r_type = 'Staff'
+        elif self.type.lower() == 'sc':
+            r_type = 'Scroll'
+        elif self.type.lower() == 'a':
+            r_type = 'Ammunition'
+        elif self.type.lower() == 'p':
+            r_type = 'Potion'
+        elif self.type.lower() == 'rg':
+            r_type = 'Ring'
+        else:
+            r_type = self.type
+
+        return r_type
 
     def display(self):
-        displayNext(self.element)
+        wrapper = TextWrapper(width=gts().columns - 2, initial_indent="", subsequent_indent="")
+        print(self.name)
+        print(self.readable_type)
+        if self.value != 'None':
+            print(f"Value: {self.value}")
+        if self.weight != 'None':
+            print(f"Weight: {self.weight}")
+        if self.ac != 'None':
+            print(f"AC: {self.ac}")
+        if self.strength != 'None':
+            print(f"Strength: {self.strength}")
+        if self.stealth == 'YES':
+            print("Stealth disadvantage")
+        if self.dmg1 != 'None':
+            print(f"Damage: {self.dmg1}")
+        if self.dmg2 != 'None':
+            print(f"Secondary Damage: {self.dmg2}")
+        if self.dmgType != 'None':
+            print("Damage Type: " + self.readable_dmg_type)
+        if self.properties != 'None':
+            joined_properties = ", ".join(self.readable_properties)
+            print(f"Properties: {joined_properties}")
+        if self.rarity != 'None':
+            print(f"Rarity: {self.rarity}")
+        if self.range != 'None':
+            print(f"Range: {self.range}")
+        if self.modifiers != []:
+            joined_modifiers = " | ".join(self.modifiers)
+            print(f"Modifiers: {joined_modifiers}")
+        if self.rolls != []:
+            joined_rolls = " | ".join(self.rolls)
+            print(f"Rolls: {joined_rolls}")
+
+        wrapper.width = gts().columns -2
+        wrapper.subsequent_indent = '  '
+        description_lines = ""
+        for i, line in enumerate(self.description):
+            wrapped_line = wrapper.fill(line) + "\n"
+            description_lines += wrapped_line
+            if i + 1 != len(self.description):
+                description_lines += '\n'
+
+        print('\n==========Description==========')
+        print(f"{description_lines}")
 
 
 class Spell(GenericEntry):
@@ -417,7 +571,6 @@ class Spell(GenericEntry):
 
         return school
 
-
     @property
     def readable_level(self):
         level = ''
@@ -435,7 +588,6 @@ class Spell(GenericEntry):
             level = self.level
 
         return level
-
 
     def display(self):
         print = s_print
